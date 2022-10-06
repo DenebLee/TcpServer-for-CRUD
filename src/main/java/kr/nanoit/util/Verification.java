@@ -1,4 +1,4 @@
-package kr.nanoit.config;
+package kr.nanoit.util;
 
 import lombok.Builder;
 import lombok.Getter;

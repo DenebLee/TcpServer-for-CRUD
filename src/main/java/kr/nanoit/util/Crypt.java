@@ -1,22 +1,25 @@
-package kr.nanoit.config;
+package kr.nanoit.util;
 
+import kr.nanoit.exception.DecryptException;
 import org.apache.commons.codec.binary.Base64;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * The type Crypt.
  */
 public class Crypt {
 
-    private kr.nanoit.config.Base64Coder Base64Coder = new Base64Coder();
+    private kr.nanoit.util.Base64Coder Base64Coder = new Base64Coder();
     private final byte[] IV = new byte[]{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
     private final byte[] keyBytes = new byte[16];
 
@@ -29,10 +32,11 @@ public class Crypt {
 
     }
 
-    public void cryptInit(String enc) {
+    public void cryptInit(String enc) throws DecryptException {
         try {
 
             if (enc == null) {
+                throw new DecryptException("encryptKey is null");
             } else {
                 int keySize = enc.getBytes().length;
 
@@ -48,10 +52,12 @@ public class Crypt {
                 provider = new BouncyCastleProvider();
 
                 //어떤 모드로 암호화, 복호화를 할 것인지 설정, 암호화종류/방식/패딩처리 방식ZeroBytePadding
-                cipher = Cipher.getInstance("AES    /CBC/PKCS5Padding");
+                cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (DecryptException e) {
+            throw new DecryptException(e.getMessage());
+        } catch (NoSuchPaddingException | NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -66,7 +72,7 @@ public class Crypt {
      * @throws BadPaddingException                the bad padding exception
      */
     public byte[] deCrypt(String data) throws InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
-        return decryptAsByte(Base64.decodeBase64(data));
+            return decryptAsByte(Base64.decodeBase64(data));
     }
 
     /**

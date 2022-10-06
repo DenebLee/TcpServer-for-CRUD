@@ -32,7 +32,7 @@ class SandBoxHttpServerTest {
     @DisplayName("HttpServer 가 켜져있는지  ")
     void should_turn_on_http_server() throws IOException {
         // given
-        SandBoxHttpServer expected = new SandBoxHttpServer("localhost", port);
+        SandBoxHttpServer expected = new SandBoxHttpServer("localhost", port,111);
         expected.start();
 
         // when

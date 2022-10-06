@@ -1,5 +1,6 @@
 package kr.nanoit.http;
 
+import kr.nanoit.dto.UserDto;
 import lombok.Getter;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -29,7 +30,7 @@ class HttpServerHandlerTest {
     @BeforeEach
     void setUp() throws IOException {
         port = getRandomPort();
-        httpServer = new SandBoxHttpServer("localhost", port);
+        httpServer = new SandBoxHttpServer("localhost", port, 123);
         httpServer.start();
     }
 
@@ -75,11 +76,59 @@ class HttpServerHandlerTest {
         StringEntity stringEntity = new StringEntity(json);
 
         // when
-        Response actual = postJson(url,stringEntity);
+        Response actual = postJson(url, stringEntity);
 
         // then
         assertThat(actual.code).isEqualTo(400);
         assertThat(actual.body).contains("not found: user id");
+    }
+
+    @Test
+    @DisplayName("UserDto에 password값이 null이면 badRequest가 떨어져야 함")
+    void should_return_bad_reqeust_when_password_is_null() throws IOException {
+        // given
+        String json = "{\"id\": \"test01\" , \"encryptKey\" : \"q1w2e3r4t5\"}";
+        String url = "http://localhost:" + port + "/crud";
+        StringEntity stringEntity = new StringEntity(json);
+
+        // when
+        Response actual = postJson(url, stringEntity);
+
+        // then
+        assertThat(actual.code).isEqualTo(400);
+        assertThat(actual.body).contains("not found: user password");
+    }
+
+    @Test
+    @DisplayName("요청한 id값이 일치 하지 않을때 badRequest가 떨어져야 함")
+    void should_return_bad_request_when_id_is_not_match() throws IOException {
+        // given
+        String json = "{\"id\": \"test03\" , \"password\": \"test01\" , \"encryptKey\" : \"q1w2e3r4t5y6u7i8\"}";
+        String url = "http://localhost:" + port + "/crud";
+        StringEntity stringEntity = new StringEntity(json);
+
+        // when
+        Response actual = postJson(url, stringEntity);
+
+        // then
+        assertThat(actual.code).isEqualTo(400);
+        assertThat(actual.body).contains("Requested Id is not Match");
+    }
+
+    @Test
+    @DisplayName("요청한 password값이 일치 하지 않을때 badRequest가 떨어져야 함")
+    void should_return_bad_request_when_password_is_not_match() throws IOException {
+        // given
+        String json = "{\"id\": \"test02\" , \"password\": \"FplyNqy9UcOt5AxQpNAY8g==\" , \"encryptKey\" : \"q1w2e3r4t5y6u7i8\"}";
+        String url = "http://localhost:" + port + "/crud";
+        StringEntity stringEntity = new StringEntity(json);
+
+        // when
+        Response actual = postJson(url, stringEntity);
+
+        // then
+        assertThat(actual.code).isEqualTo(400);
+        assertThat(actual.body).contains("Requested Password is not Match");
     }
 
 

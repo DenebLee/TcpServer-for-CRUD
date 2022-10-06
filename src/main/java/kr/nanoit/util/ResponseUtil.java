@@ -1,10 +1,8 @@
-package kr.nanoit.common;
+package kr.nanoit.util;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import kr.nanoit.dto.HttpBadResponseDto;
-import kr.nanoit.util.GlobalVariable;
-import kr.nanoit.util.Mapper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -15,7 +13,7 @@ import java.time.OffsetDateTime;
 import static kr.nanoit.util.GlobalVariable.*;
 
 @Slf4j
-public class HandlerUtil {
+public class ResponseUtil {
 
     public static void responseOk(HttpExchange exchange, byte[] rawBytes) throws IOException {
         sendHeader(exchange, rawBytes, HTTP_OK);
@@ -37,5 +35,14 @@ public class HandlerUtil {
         OutputStream outputStream = exchange.getResponseBody();
         outputStream.write(text);
         outputStream.flush();
+    }
+
+    public static void internalServerError(HttpExchange exchange, String message) {
+        try {
+            byte[] bytesOfBody = Mapper.writePretty(new HttpBadResponseDto(OffsetDateTime.now().toString(), HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error", message)).getBytes(StandardCharsets.UTF_8);
+            sendHeader(exchange, bytesOfBody, HTTP_INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            log.error("internal server process in unknown error", e);
+        }
     }
 }
