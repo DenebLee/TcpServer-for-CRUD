@@ -1,4 +1,4 @@
-package kr.nanoit.dto;
+package kr.nanoit.model.dto;
 
 import lombok.*;
 import lombok.experimental.Accessors;

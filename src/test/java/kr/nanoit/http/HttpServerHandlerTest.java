@@ -1,6 +1,5 @@
 package kr.nanoit.http;
 
-import kr.nanoit.dto.UserDto;
 import lombok.Getter;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;

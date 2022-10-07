@@ -4,13 +4,15 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.sql.Timestamp;
+
 @Getter
 @Setter
 @ToString
 public class Message implements MessageService{
 
     private String protocol;
-    private String send_time;
+    private Timestamp send_time;
     private String sendstate;
     private String sender;
     private String content;

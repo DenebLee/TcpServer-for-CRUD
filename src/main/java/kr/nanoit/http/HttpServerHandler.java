@@ -1,29 +1,23 @@
 package kr.nanoit.http;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
-import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import kr.nanoit.controller.SocketConfig;
-import kr.nanoit.util.Crypt;
-import kr.nanoit.dto.HttpBadResponseDto;
-import kr.nanoit.dto.ServerInfo;
-import kr.nanoit.dto.UserDto;
+import kr.nanoit.util.ClientCrypt;
+import kr.nanoit.model.dto.ServerInfo;
+import kr.nanoit.model.dto.UserDto;
 import kr.nanoit.exception.HttpException;
 import kr.nanoit.main.Main;
+import kr.nanoit.util.Crypt;
 import kr.nanoit.util.Mapper;
-import kr.nanoit.util.ResponseUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.BadPaddingException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.security.SecureRandom;
-import java.time.OffsetDateTime;
 
 import static kr.nanoit.util.GlobalVariable.*;
 import static kr.nanoit.util.ResponseUtil.*;

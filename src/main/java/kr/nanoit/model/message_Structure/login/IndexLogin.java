@@ -1,4 +1,4 @@
-package kr.nanoit.dto.login;
+package kr.nanoit.model.message_Structure.login;
 
 import kr.nanoit.model.message_Structure.IndexHeader;
 

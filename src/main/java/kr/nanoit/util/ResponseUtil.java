@@ -2,7 +2,7 @@ package kr.nanoit.util;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
-import kr.nanoit.dto.HttpBadResponseDto;
+import kr.nanoit.model.dto.HttpBadResponseDto;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;

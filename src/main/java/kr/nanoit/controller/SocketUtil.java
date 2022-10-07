@@ -15,6 +15,12 @@ public class SocketUtil extends SocketConfig {
 
     private final Object receiveLock = new Object();
     @Getter
+    @Setter
+    private String id;
+    @Getter
+    @Setter
+    private String password;
+    @Getter
     LinkedBlockingQueue<MessageService> queue_for_Send;
 
     @Getter

@@ -1,7 +1,7 @@
 package kr.nanoit.decoder;
 
 
-import kr.nanoit.dto.login.IndexLogin;
+import kr.nanoit.model.message_Structure.login.IndexLogin;
 
 public class DecoderLogin {
 
