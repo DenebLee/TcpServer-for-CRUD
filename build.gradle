@@ -47,8 +47,11 @@ dependencies {
     // JDBC DRIVER
     implementation 'org.postgresql:postgresql:42.5.0'
 
-    //JWT
+    // JWT
     implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
+
+    // DB
+    implementation group: 'org.mybatis', name: 'mybatis', version: '3.5.11'
 }
 
 test {

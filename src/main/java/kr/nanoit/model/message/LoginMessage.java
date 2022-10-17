@@ -7,14 +7,8 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class LoginMessage implements MessageService {
-
+public class LoginMessage {
     private String protocol;
     private String id;
     private String password;
-
-    @Override
-    public String getProtocol() {
-        return protocol;
-    }
 }

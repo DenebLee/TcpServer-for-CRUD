@@ -12,5 +12,6 @@ public final class GlobalVariable {
     public static final String METHOD_GET = "GET";
     public static final String METHOD_POST = "POST";
     public static final String APPLICATION_JSON_CHARSET_UTF_8 = "application/json; charset=UTF-8";
+    public static final byte BYTE_SPACE = ' ';
 }
 

@@ -1,10 +1,10 @@
-package kr.nanoit.exception;
+package kr.nanoit.exception.message;
 
-public class SendException extends Exception {
+public class InsertException extends Exception {
 
     private final String reason;
 
-    public SendException(String reason) {
+    public InsertException(String reason) {
         super(reason);
         this.reason = reason;
     }

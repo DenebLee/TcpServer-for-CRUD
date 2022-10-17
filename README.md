@@ -16,12 +16,16 @@
 ## FlowChart
 <img src="./Flow-chart.png">
 
+## TODO 
+1. TestCode에 TestContainer 생성 후 테스트 할것 
+
 
 ## COMMIT
-| DATE         | content                                                                                                                                                                                                |
-|--------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| DATE         | content                                                                                                                                                  |
+|--------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
 | [2022-10-05] | Httpserver 생성, password 디코딩 비즈니스 로직 추가, 각 목적별 Dto 생성, Exception으로 오류 처리 , Http 요청에 따른 Request 구현, Object Mapper 로직 추가, Httpserver 테스트 코드 작성, handler작성 중 |
-| [2022-10-06] | ReceiveServer 구현, Model 구현 ( Message,LoginMessage ), HttpServerHandler에 대한 테스트 코드 작성 완료 , PacketType enum 작성, 잘못된 요청에 대한 BadSendPacket 구현중                                |                                                                                                     |
+| [2022-10-06] | ReceiveServer 구현, Model 구현 ( Message,LoginMessage ), HttpServerHandler에 대한 테스트 코드 작성 완료 , PacketType enum 작성, 잘못된 요청에 대한 BadSendPacket 구현중               |                                                                                                     |
+| [2022-10-17] | Mybatis Mapping 될 MessageDAO 및 implement구현 , DAO 테스트 코드 구현 , 각 목적에 따른 Exception 구현, 프로젝트 방향서 재성립                                                         |                                                                                                     |
 
 ## Used Library
 ```c

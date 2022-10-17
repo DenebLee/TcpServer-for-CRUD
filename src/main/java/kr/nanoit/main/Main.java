@@ -2,14 +2,12 @@ package kr.nanoit.main;
 
 import java.io.File;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import kr.nanoit.controller.SocketUtil;
 import kr.nanoit.util.Verification;
 import kr.nanoit.http.SandBoxHttpServer;
 import lombok.extern.slf4j.Slf4j;
@@ -48,7 +46,7 @@ public class Main {
             SandBoxHttpServer sandBoxHttpServer = new SandBoxHttpServer(configuration.getString("http.host"), configuration.getInt("http.port"), getRandomPort());
             sandBoxHttpServer.start();
 
-            SocketUtil socketUtil = new SocketUtil(serverSocket.accept());
+//            SocketUtil socketUtil = new SocketUtil(serverSocket.accept());
 
             // Thread list
 
