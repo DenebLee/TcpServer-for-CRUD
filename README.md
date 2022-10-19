@@ -13,23 +13,43 @@
     - Try a Managed Messaging Protocol
     - interface.(SEND, json);
 
-## FlowChart
-<img src="./Flow-chart.png">
 
 ## TODO 
-1. TestCode에 TestContainer 생성 후 테스트 할것 
+1. Repository 메소드 전체 구현 및 테스트 코드 작성
+2. service impl 구현
+
+
+## Complete
+- TestCode에 TestContainer 생성 후 테스트 
+- 프로젝트 방향성 재 확립 
+- 프로젝트 구조 리펙토링 
+- Repository와 service 비즈니스 로직 간 명확한 구분 짓기 
+- Interface CrudRespositoty에 명시된 메소드들 구현하기
 
 
 ## COMMIT
-| DATE         | content                                                                                                                                                  |
-|--------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| DATE         | content                                                                                                                                               |
+|--------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
 | [2022-10-05] | Httpserver 생성, password 디코딩 비즈니스 로직 추가, 각 목적별 Dto 생성, Exception으로 오류 처리 , Http 요청에 따른 Request 구현, Object Mapper 로직 추가, Httpserver 테스트 코드 작성, handler작성 중 |
-| [2022-10-06] | ReceiveServer 구현, Model 구현 ( Message,LoginMessage ), HttpServerHandler에 대한 테스트 코드 작성 완료 , PacketType enum 작성, 잘못된 요청에 대한 BadSendPacket 구현중               |                                                                                                     |
-| [2022-10-17] | Mybatis Mapping 될 MessageDAO 및 implement구현 , DAO 테스트 코드 구현 , 각 목적에 따른 Exception 구현, 프로젝트 방향서 재성립                                                         |                                                                                                     |
+| [2022-10-06] | ReceiveServer 구현, Model 구현 ( Message,LoginMessage ), HttpServerHandler에 대한 테스트 코드 작성 완료 , PacketType enum 작성, 잘못된 요청에 대한 BadSendPacket 구현중            |                                                                                                     |
+| [2022-10-17] | Mybatis Mapping 될 MessageDAO 및 implement구현 , DAO 테스트 코드 구현 , 각 목적에 따른 Exception 구현, 프로젝트 방향서 재성립                                                      |                                                                                                     |
+| [2022-10-19] | 인터페이스 CrudRepository에서 명시한 메소드들 구현, Repository 구현체에 대한 테스트 코드 작성, Repository와 비즈니스 로직에 대한 명확한 구분을 짓기위한 프로젝트 구조 개선, resource에 설정파일 두지 않고 리소스 루트 폴더에 지정 |                                                                                                     |
 
 ## Used Library
 ```c
-  implementation 'org.projectlombok:lombok:1.18.22'
+  plugins {
+    id 'java'
+}
+apply plugin: 'application'
+group 'nanoit.kr'
+version 'v0.0.1'
+
+repositories {
+    mavenCentral()
+}
+compileJava.options.encoding = 'UTF-8'
+dependencies {
+    implementation 'org.projectlombok:lombok:1.18.22'
 
     implementation group: 'org.apache.commons', name: 'commons-configuration2', version: '2.0'
     implementation group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.68'
@@ -43,6 +63,8 @@
     testImplementation "org.testcontainers:testcontainers:1.17.3"
     testImplementation "org.testcontainers:junit-jupiter:1.17.3"
     testImplementation "org.testcontainers:postgresql:1.17.3"
+    implementation group: 'com.google.inject', name: 'guice', version: '4.2.2'
+    implementation group: 'org.mybatis', name: 'mybatis-guice', version: '3.17'
 
     // UTILS
     implementation 'org.projectlombok:lombok:1.18.24'
@@ -66,60 +88,159 @@
     // JDBC DRIVER
     implementation 'org.postgresql:postgresql:42.5.0'
 
-    //JWT
+    // JWT
     implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
+
+    // DB
+    implementation group: 'org.mybatis', name: 'mybatis', version: '3.5.11'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDir "./mapper/"
+        }
+    }
+    test {
+        resources {
+            srcDir "./mapper/"
+        }
+    }
+}
 ````
 ## Project Structure
 
 ```bash
 
+├─config
+│      db.properties
+│      test.properties
+│
+├─gradle
+│  └─wrapper
+│          gradle-wrapper.jar
+│          gradle-wrapper.properties
+│
+├─mapper
+│      MSG_POSTGRESQL.xml
+│
 └─src
     ├─main
     │  ├─java
     │  │  └─kr
     │  │      └─nanoit
-    │  │          ├─common
-    │  │          │      HandlerUtil.java
-    │  │          │      Validation.java
+    │  │          ├─core
+    │  │          │  └─db
+    │  │          │          DataBaseSessionManager.java
     │  │          │
-    │  │          ├─config
-    │  │          │      Base64Coder.java
-    │  │          │      Crypt.java
-    │  │          │      Verification.java
-    │  │          │
-    │  │          ├─controller
-    │  │          ├─dto
-    │  │          │      HttpBadResponseDto.java
-    │  │          │      ServerInfo.java
-    │  │          │      UserDto.java
-    │  │          │
-    │  │          ├─exception
-    │  │          │      HttpException.java
+    │  │          ├─extension
+    │  │          │      PathUtils.java
+    │  │          │      Test.java
     │  │          │
     │  │          ├─http
-    │  │          │      HealthHandler.java
-    │  │          │      HttpServerHandler.java
-    │  │          │      SandBoxHttpServer.java
-    │  │          │
-    │  │          ├─main
-    │  │          │      Main.java
+    │  │          │      GetMessageHandler.java
     │  │          │
     │  │          ├─model
-    │  │          └─util
-    │  │                  GlobalVariable.java
-    │  │                  Mapper.java
-    │  │
+    │  │          │  ├─dto
+    │  │          │  │      HttpBadResponseDto.java
+    │  │          │  │      ServerInfo.java
+    │  │          │  │      UserDto.java
+    │  │          │  │
+    │  │          │  ├─message
+    │  │          │  │      LoginMessage.java
+    │  │          │  │      MessageDto.java
+    │  │          │  │      MessageType.java
+    │  │          │  │
+    │  │          │  └─message_Structure
+    │  │          │      │  IndexHeader.java
+    │  │          │      │  LengthHeader.java
+    │  │          │      │  PacketType.java
+    │  │          │      │
+    │  │          │      ├─login
+    │  │          │      │      IndexLogin.java
+    │  │          │      │      LengthLogin.java
+    │  │          │      │
+    │  │          │      ├─report
+    │  │          │      └─send
+    │  │          │              IndexSend.java
+    │  │          │              LengthSend.java
+    │  │          │
+    │  │          ├─old
+    │  │          │  ├─client
+    │  │          │  │      ClientCrypt.java
+    │  │          │  │      SimpleClient.java
+    │  │          │  │
+    │  │          │  ├─controller
+    │  │          │  │      SocketConfig.java
+    │  │          │  │      SocketUtil.java
+    │  │          │  │
+    │  │          │  ├─decoder
+    │  │          │  │      PacketMakeable.java
+    │  │          │  │      PacketMakeableImpl.java
+    │  │          │  │
+    │  │          │  ├─exception
+    │  │          │  │  │  DecryptException.java
+    │  │          │  │  │  HttpException.java
+    │  │          │  │  │  ReceiveException.java
+    │  │          │  │  │
+    │  │          │  │  └─message
+    │  │          │  │          DeleteException.java
+    │  │          │  │          InsertException.java
+    │  │          │  │          SelectException.java
+    │  │          │  │          SendException.java
+    │  │          │  │          UpdateException.java
+    │  │          │  │
+    │  │          │  ├─http
+    │  │          │  │      HealthHandler.java
+    │  │          │  │      HttpResponseDto.java
+    │  │          │  │      HttpServerHandler.java
+    │  │          │  │      SandBoxHttpServer.java
+    │  │          │  │
+    │  │          │  ├─main
+    │  │          │  │      Main.java
+    │  │          │  │      Test.java
+    │  │          │  │
+    │  │          │  ├─util
+    │  │          │  │      Base64Coder.java
+    │  │          │  │      Crypt.java
+    │  │          │  │      GlobalVariable.java
+    │  │          │  │      Mapper.java
+    │  │          │  │      ResponseUtil.java
+    │  │          │  │      Verification.java
+    │  │          │  │
+    │  │          │  └─woker
+    │  │          │          Receive.java
+    │  │          │          Send.java
+    │  │          │
+    │  │          ├─repository
+    │  │          │      ReceivedMessageRepository.java
+    │  │          │      ReceivedMessageRepositoryImpl.java
+    │  │          │      SendToTelecomMessageRepository.java
+    │  │          │
+    │  │          ├─service
+    │  │          │      ReceivedMessageService.java
+    │  │          │      ReceivedMessageServiceImpl.java
+    │  │          │      SendToTelecomMEssageService.java
+    │  │          │
+    │  │          └─tcp
     │  └─resources
-    │          test.properties
-    │
     └─test
         ├─java
-        │  └─kr
-        │      └─nanoit
-        │          └─http
-        │                  HttpServerHandlerTest.java
-        │                  SandBoxHttpServerTest.java
+        │  ├─kr
+        │  │  └─nanoit
+        │  │      └─http
+        │  │              HttpServerHandlerTest.java
+        │  │              SandBoxHttpServerTest.java
+        │  │              SqlSessionTest.java
+        │  │
+        │  └─message
+        │          ReceivedMessageRepositoryImplTest.java
         │
         └─resources
+                logback-test.xml
 
 ```
