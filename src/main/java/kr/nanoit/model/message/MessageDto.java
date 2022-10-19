@@ -15,8 +15,10 @@ import java.sql.Timestamp;
 public class MessageDto {
 
     private long id; // pk
-    private Timestamp send_time;
-    private String sender;
-    private String content;
-
+    private MessageType message_type;
+    private Timestamp received_time;
+    private Integer sender_agent_id;
+    private String to_phone_number;
+    private String from_phone_number;
+    private String message_content;
 }

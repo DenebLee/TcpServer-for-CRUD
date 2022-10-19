@@ -1,6 +1,6 @@
 package kr.nanoit.http;
 
-import kr.nanoit.http.SandBoxHttpServer;
+import kr.nanoit.old.http.SandBoxHttpServer;
 import lombok.Getter;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;

@@ -1,7 +1,6 @@
 package kr.nanoit.model.message_Structure.send;
 
 import kr.nanoit.model.message_Structure.IndexHeader;
-import org.checkerframework.checker.units.qual.Length;
 
 public class IndexSend {
 

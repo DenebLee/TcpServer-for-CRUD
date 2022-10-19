@@ -1,14 +1,14 @@
 plugins {
     id 'java'
 }
-
+apply plugin: 'application'
 group 'nanoit.kr'
-version '1.0-SNAPSHOT'
+version 'v0.0.1'
 
 repositories {
     mavenCentral()
 }
-
+compileJava.options.encoding = 'UTF-8'
 dependencies {
     implementation 'org.projectlombok:lombok:1.18.22'
 
@@ -24,6 +24,8 @@ dependencies {
     testImplementation "org.testcontainers:testcontainers:1.17.3"
     testImplementation "org.testcontainers:junit-jupiter:1.17.3"
     testImplementation "org.testcontainers:postgresql:1.17.3"
+    implementation group: 'com.google.inject', name: 'guice', version: '4.2.2'
+    implementation group: 'org.mybatis', name: 'mybatis-guice', version: '3.17'
 
     // UTILS
     implementation 'org.projectlombok:lombok:1.18.24'
@@ -56,4 +58,17 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDir "./mapper/"
+        }
+    }
+    test {
+        resources {
+            srcDir "./mapper/"
+        }
+    }
 }

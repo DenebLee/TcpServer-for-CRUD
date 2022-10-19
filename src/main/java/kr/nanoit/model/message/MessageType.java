@@ -2,7 +2,7 @@ package kr.nanoit.model.message;
 
 public enum MessageType {
 
-    BASIC("BASIC"),
+    SMS("SMS"),
 
     NONE("NONE");
 
