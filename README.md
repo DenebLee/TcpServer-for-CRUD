@@ -17,6 +17,7 @@
 ## TODO 
 1. Repository 메소드 전체 구현 및 테스트 코드 작성
 2. service impl 구현
+3. 테이블 전체 데이터 삭제 시 pk키 AUTO_INCREMENT 초기화되게 수정
 
 
 ## Complete

@@ -1,9 +1,9 @@
 package kr.nanoit.old.decoder;
 
-import kr.nanoit.model.message.MessageDto;
+import kr.nanoit.model.message.ReceiveMessageDto;
 
 public interface PacketMakeable {
-    byte[] send_ack(MessageDto messageDto);
+    byte[] send_ack(ReceiveMessageDto receiveMessageDto);
 
     byte[] login_ack(String result);
 

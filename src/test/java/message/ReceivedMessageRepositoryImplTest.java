@@ -3,55 +3,45 @@ package message;
 import kr.nanoit.model.message.MessageType;
 import kr.nanoit.old.exception.message.DeleteException;
 import kr.nanoit.old.exception.message.SelectException;
-import kr.nanoit.repository.ReceivedMessageRepository;
+import kr.nanoit.old.exception.message.UpdateException;
 import kr.nanoit.old.exception.message.InsertException;
-import kr.nanoit.model.message.MessageDto;
+import kr.nanoit.model.message.ReceiveMessageDto;
+import kr.nanoit.repository.ReceivedMessageRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Testcontainers
-class ReceivedMessageRepositoryImplTest {
+class ReceivedMessageRepositoryImplTest extends TestSetUp {
     private ReceivedMessageRepository receivedMessageRepository;
-    Timestamp receiveTime;
-    @Container
-    public PostgreSQLContainer postgreSQLContainer = new PostgreSQLContainer("postgres:14.5-alpine");
+
+    public ReceivedMessageRepositoryImplTest() throws IOException {
+        super("RECEIVE");
+    }
 
     @BeforeEach
-    void setUp() throws IOException {
-        Properties properties = new Properties();
-        properties.setProperty("driver", postgreSQLContainer.getDriverClassName());
-        properties.setProperty("url", postgreSQLContainer.getJdbcUrl());
-        properties.setProperty("username", postgreSQLContainer.getUsername());
-        properties.setProperty("password", postgreSQLContainer.getPassword());
-        properties.setProperty("mapper", "MSG_POSTGRESQL.xml");
-
+    void setUp() throws DeleteException, IOException {
         receivedMessageRepository = ReceivedMessageRepository.createMybatis(properties);
-
-        receiveTime = new Timestamp(System.currentTimeMillis());
-
+        receivedMessageRepository.deleteAll();
     }
 
     @Test
-    @DisplayName("SELECT BY ID")
-    void should_select_by_id() throws InsertException, SelectException {
+    @DisplayName("RECEIVE -> FIND BY ID")
+    void should_receive_select_by_id() throws InsertException, SelectException {
         // given
-        MessageDto expected = new MessageDto(0, MessageType.SMS, receiveTime, 4, "010-4040-4141", "010-4444-5555", "테스트");
+        ReceiveMessageDto expected = new ReceiveMessageDto(0, MessageType.SMS, new Timestamp(System.currentTimeMillis()), 4, "010-4040-4141", "010-4444-5555", "테스트");
         receivedMessageRepository.save(expected);
 
         // when
-        MessageDto actual = receivedMessageRepository.findById(expected.getId());
+        ReceiveMessageDto actual = receivedMessageRepository.findById(expected.getId());
 
         // then
         assertThat(actual.getMessage_type()).isEqualTo(expected.getMessage_type());
@@ -63,42 +53,29 @@ class ReceivedMessageRepositoryImplTest {
     }
 
     @Test
-    @DisplayName("COUNT")
-    void should_return_number_of_count() throws SelectException, InsertException {
+    @DisplayName("RECEIVE -> COUNT")
+    void should_receive_return_number_of_count() throws SelectException, InsertException {
         // given
-        receivedMessageRepository.save(new MessageDto(0, MessageType.SMS, receiveTime, 4, "010-4040-4141", "010-4444-5555", "테스트"));
-
-        // when
-        int result = receivedMessageRepository.count();
-
-        // then
-        assertThat(result).isEqualTo(1);
-    }
-
-    @Test
-    @DisplayName("DELETE")
-    void should_delete_given_dto() throws InsertException, DeleteException {
-        // given
-        MessageDto expected = new MessageDto(0, MessageType.SMS, receiveTime, 4, "010-4040-4141", "010-4444-5555", "테스트");
+        ReceiveMessageDto expected = new ReceiveMessageDto(0, MessageType.SMS, new Timestamp(System.currentTimeMillis()), 4, "010-4040-4141", "010-4444-5555", "테스트");
         receivedMessageRepository.save(expected);
 
         // when
-        boolean actual = receivedMessageRepository.delete(expected);
+        int actual = receivedMessageRepository.count();
 
         // then
-        assertThat(actual).isTrue();
-
+        assertThat(actual).isEqualTo(1);
     }
 
+
     @Test
-    @DisplayName("DELETE BY ID")
-    void should_delete_by_id() throws InsertException, DeleteException {
+    @DisplayName("RECEIVE -> DELETE BY ID")
+    void should_receive_delete_by_id() throws InsertException, DeleteException {
         // given
-        MessageDto expected = new MessageDto(0, MessageType.SMS, receiveTime, 4, "010-4040-4141", "010-4444-5555", "테스트");
+        ReceiveMessageDto expected = new ReceiveMessageDto(0, MessageType.SMS, new Timestamp(System.currentTimeMillis()), 4, "010-4040-4141", "010-4444-5555", "테스트");
         receivedMessageRepository.save(expected);
 
         // when
-        boolean actual = receivedMessageRepository.deleteById(expected.getId());
+        boolean actual = receivedMessageRepository.delete(expected.getId());
 
         // then
         assertThat(actual).isTrue();
@@ -107,14 +84,14 @@ class ReceivedMessageRepositoryImplTest {
     }
 
     @Test
-    @DisplayName("DELETE ALL")
-    void should_delete_all() throws DeleteException {
+    @DisplayName("RECEIVE -> DELETE ALL")
+    void should_receive_delete_all() throws DeleteException, InsertException {
         // given -> 100 칼럼 생성
-        List<MessageDto> expected = new ArrayList<>();
+        List<ReceiveMessageDto> expected = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
-            expected.add(new MessageDto(0, MessageType.SMS, receiveTime, i, "010-4040-4141" + i, "010-4444-5555" + i, "테스트" + i));
+            expected.add(new ReceiveMessageDto(0, MessageType.SMS, new Timestamp(System.currentTimeMillis()), i, "010-4040-4141" + i, "010-4444-5555" + i, "테스트" + i));
         }
-        System.out.println("\n" + expected + "\n");
+        receivedMessageRepository.saveAll(expected);
         // when
         boolean actual = receivedMessageRepository.deleteAll();
 
@@ -123,39 +100,56 @@ class ReceivedMessageRepositoryImplTest {
     }
 
     @Test
-    @DisplayName("DELETE ALL BY CONDITION")
-    void should_delete_all_when_request_condition() {
+    @DisplayName("RECEIVE -> DELETE ALL BY CONDITION")
+    void should_receive_delete_all_when_request_condition() {
 
     }
 
     @Test
-    @DisplayName("EXISTS BY ID")
+    @DisplayName("RECEIVE -> EXISTS BY ID")
     void should_exists_by_id() throws InsertException, SelectException {
         // given
-        MessageDto expected = new MessageDto(0, MessageType.SMS, receiveTime, 4, "010-4040-4141", "010-4444-5555", "테스트");
+        ReceiveMessageDto expected = new ReceiveMessageDto(0, MessageType.SMS, new Timestamp(System.currentTimeMillis()), 4, "010-4040-4141", "010-4444-5555", "테스트");
         receivedMessageRepository.save(expected);
+        long id = expected.getId();
 
         // when
-        boolean actual = receivedMessageRepository.existsById(1);
+        boolean actual = receivedMessageRepository.existsById(id);
 
         // then
         assertThat(actual).isTrue();
+    }
 
+    @Test
+    @DisplayName("RECEIVE -> UPDATE")
+    void should_receive_update() throws InsertException, UpdateException, SelectException {
+        // given
+        ReceiveMessageDto originalData = new ReceiveMessageDto(0, MessageType.SMS, new Timestamp(System.currentTimeMillis()), 4, "010-4040-4141", "010-4444-5555", "테스트");
+        receivedMessageRepository.save(originalData);
+        long id = originalData.getId();
+        ReceiveMessageDto expected = new ReceiveMessageDto(id, MessageType.NONE, new Timestamp(System.currentTimeMillis()), 2, "010101010", "010-4444-5555", "안녕하세요 저는 이정섭입니다");
+
+        // when
+        int actual = receivedMessageRepository.update(expected);
+
+        // then
+        assertThat(actual).isEqualTo(1);
+        assertThat(receivedMessageRepository.findById(expected.getId())).isNotEqualTo(originalData);
     }
 
 
     @Test
-    @DisplayName("FIND BY ID")
-    void should_return_result_when_select_message_id() throws InsertException, SelectException {
+    @DisplayName("RECEIVE -> FIND BY ID")
+    void should_receive_return_result_when_select_message_id() throws InsertException, SelectException {
         // given
-        MessageDto expected = new MessageDto(0, MessageType.SMS, receiveTime, 4, "010-4040-4141", "010-4444-5555", "테스트");
+        ReceiveMessageDto expected = new ReceiveMessageDto(0, MessageType.SMS, new Timestamp(System.currentTimeMillis()), 4, "010-4040-4141", "010-4444-5555", "테스트");
         receivedMessageRepository.save(expected);
+        long id = expected.getId();
 
         // when
-        MessageDto actual = receivedMessageRepository.findById(expected.getId());
+        ReceiveMessageDto actual = receivedMessageRepository.findById(id);
 
         // then
-//        assertThat(actual.getId()).isEqualTo(expected.getId());
         assertThat(actual.getMessage_type()).isEqualTo(expected.getMessage_type());
         assertThat(actual.getReceived_time()).isEqualTo(expected.getReceived_time());
         assertThat(actual.getTo_phone_number()).isEqualTo(expected.getTo_phone_number());
@@ -165,11 +159,11 @@ class ReceivedMessageRepositoryImplTest {
     }
 
     @Test
-    @DisplayName("INSERT")
-    void should_insert() throws InsertException {
+    @DisplayName("RECEIVE -> INSERT")
+    void should_receive_insert() throws InsertException {
 
         // given
-        MessageDto expected = new MessageDto(0, MessageType.SMS, receiveTime, 4, "010-4040-4141", "010-4444-5555", "테스트");
+        ReceiveMessageDto expected = new ReceiveMessageDto(0, MessageType.SMS, new Timestamp(System.currentTimeMillis()), 4, "010-4040-4141", "010-4444-5555", "테스트");
 
         // when
         int acutal = receivedMessageRepository.save(expected);
@@ -179,12 +173,12 @@ class ReceivedMessageRepositoryImplTest {
     }
 
     @Test
-    @DisplayName("SAVE ALL")
-    void should_save_entire_list() throws InsertException {
+    @DisplayName("RECEIVE -> SAVE ALL")
+    void should_receive_save_entire_list() throws InsertException {
         // given
-        List<MessageDto> expected = new ArrayList<>();
+        List<ReceiveMessageDto> expected = new ArrayList<>();
         for (int i = 0; i < 50; i++) {
-            expected.add(new MessageDto(0, MessageType.SMS, receiveTime, i, "010-4040-4141" + i, "010-4444-5555" + i, "테스트" + i));
+            expected.add(new ReceiveMessageDto(0, MessageType.SMS, new Timestamp(System.currentTimeMillis()), i, "010-4040-4141" + i, "010-4444-5555" + i, "테스트" + i));
         }
         System.out.println(expected);
         // when

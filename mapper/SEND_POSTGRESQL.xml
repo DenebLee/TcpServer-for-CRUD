@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.nanoit.repository.SendToTelecomMessageRepository">
+
+    <!--    마이바티스 에서 insert, update, delte의 return 은 int-->
+
+    <update id="createTable">
+        CREATE TABLE IF NOT EXISTS received_message_from_agent
+        (
+            ID                BIGSERIAL PRIMARY KEY NOT NULL,
+            MESSAGE_TYPE      VARCHAR(8)            NOT NULL,
+            RECEIVED_TIME     TIMESTAMP             NOT NULL,
+            SENDER_AGENT_ID   INT                   NOT NULL,
+            TO_PHONE_NUMBER   VARCHAR(32)           NOT NULL,
+            FROM_PHONE_NUMBER VARCHAR(32)           NOT NULL,
+            MESSAGE_CONTENT   TEXT                  NOT NULL
+            );
+
+        CREATE TABLE IF NOT EXISTS send_message_from_gateway_to_telecom
+        (
+            ID          BIGSERIAL PRIMARY KEY NOT NULL,
+            RECEIVED_ID BIGINT                NOT NULL references received_message_from_agent (ID),
+            STATUS      INT                   NOT NULL,
+            RESULT      VARCHAR(20)           NULL
+            );
+    </update>
+
+    <select id="send_count" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM send_message_from_gateway_to_telecom;
+
+    </select>
+
+    <delete id="send_deleteById" parameterType="_long">
+        DELETE
+        from send_message_from_gateway_to_telecom
+        WHERE ID =#{id}
+    </delete>
+
+    <delete id="send_deleteAll">
+        DELETE
+        FROM send_message_from_gateway_to_telecom;
+    </delete>
+
+    <delete id="send_deleteAllByCondition">
+
+    </delete>
+
+    <select id="send_existsById" parameterType="_long" resultType="boolean">
+        SELECT *
+        FROM send_message_from_gateway_to_telecom
+        WHERE ID = #{id};
+
+    </select>
+
+    <update id="send_update" parameterType="kr.nanoit.model.message.SendMessageDto">
+        UPDATE send_message_from_gateway_to_telecom
+        SET status      = #{status},
+            result      = #{result}
+        WHERE ID = #{id}
+    </update>
+
+    <select id="send_findById" parameterType="_long" resultType="kr.nanoit.model.message.SendMessageDto">
+        SELECT received_id, status, result
+        FROM send_message_from_gateway_to_telecom
+        WHERE ID = #{id}
+    </select>
+
+    <select id="send_findAll">
+        SELECT *
+        FROM send_message_from_gateway_to_telecom;
+    </select>
+
+    <insert id="send_save" parameterType="kr.nanoit.model.message.SendMessageDto" useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO send_message_from_gateway_to_telecom ( status, result)
+        VALUES (#{status}, #{result})
+    </insert>
+
+    <insert id="send_saveAll" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO send_message_from_gateway_to_telecom(status, result)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.status}, #{item.result}
+            )
+        </foreach>
+    </insert>
+</mapper>
+

@@ -1,6 +1,6 @@
 package kr.nanoit.old.decoder;
 
-import kr.nanoit.model.message.MessageDto;
+import kr.nanoit.model.message.ReceiveMessageDto;
 import kr.nanoit.model.message_Structure.login.IndexLogin;
 import kr.nanoit.model.message_Structure.IndexHeader;
 import kr.nanoit.model.message_Structure.LengthHeader;
@@ -22,7 +22,7 @@ public class PacketMakeableImpl implements PacketMakeable {
 
 
     @Override
-    public byte[] send_ack(MessageDto messageDto) {
+    public byte[] send_ack(ReceiveMessageDto receiveMessageDto) {
         return new byte[0];
     }
 

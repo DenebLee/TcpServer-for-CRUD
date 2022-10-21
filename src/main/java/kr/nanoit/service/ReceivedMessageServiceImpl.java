@@ -1,7 +1,7 @@
 package kr.nanoit.service;
 
 import kr.nanoit.old.exception.message.SelectException;
-import kr.nanoit.model.message.MessageDto;
+import kr.nanoit.model.message.ReceiveMessageDto;
 import kr.nanoit.repository.ReceivedMessageRepository;
 import kr.nanoit.repository.SendToTelecomMessageRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ public class ReceivedMessageServiceImpl implements ReceivedMessageService {
     private final SendToTelecomMessageRepository sendToTelecomMessageRepository;
 
     @Override
-    public List<MessageDto> selectAllMessage() {
+    public List<ReceiveMessageDto> selectAllMessage() {
         try {
             return receivedMessageRepository.findAll().stream().filter(messageDto -> {
                 if (messageDto.getMessage_content().contains("IT")) {

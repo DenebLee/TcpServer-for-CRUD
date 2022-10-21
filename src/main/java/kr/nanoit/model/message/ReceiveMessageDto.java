@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 
 // 메시지
-public class MessageDto {
+public class ReceiveMessageDto {
 
     private long id; // pk
     private MessageType message_type;

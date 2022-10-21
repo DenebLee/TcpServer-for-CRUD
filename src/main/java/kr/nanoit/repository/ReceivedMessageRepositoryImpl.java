@@ -1,7 +1,7 @@
 package kr.nanoit.repository;
 
 import kr.nanoit.core.db.DataBaseSessionManager;
-import kr.nanoit.model.message.MessageDto;
+import kr.nanoit.model.message.ReceiveMessageDto;
 import kr.nanoit.old.exception.message.DeleteException;
 import kr.nanoit.old.exception.message.InsertException;
 import kr.nanoit.old.exception.message.SelectException;
@@ -21,9 +21,10 @@ public class ReceivedMessageRepositoryImpl implements ReceivedMessageRepository 
         createReceiveTable();
     }
 
+
     private void createReceiveTable() {
         try (SqlSession session = sessionManager.getSqlSession(true)) {
-            session.update("createReceivedTable");
+            session.update("createTable");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -44,7 +45,7 @@ public class ReceivedMessageRepositoryImpl implements ReceivedMessageRepository 
     }
 
     @Override
-    public boolean deleteById(long messageId) throws DeleteException {
+    public boolean delete(long messageId) throws DeleteException {
         try (SqlSession session = sessionManager.getSqlSession(true)) {
             if (messageId != 0) {
                 int result = session.delete("deleteById", messageId);
@@ -58,41 +59,23 @@ public class ReceivedMessageRepositoryImpl implements ReceivedMessageRepository 
     }
 
     @Override
-    public boolean delete(MessageDto messageDto) throws DeleteException {
+    public boolean deleteAll() {
         try (SqlSession session = sessionManager.getSqlSession(true)) {
-            if (messageDto != null) {
-                int result = session.delete("delete", messageDto);
-                if (result != 0) {
-                    return true;
-                }
-            }
-        }
-        throw new DeleteException("Delete use Dto Error");
-    }
-
-    @Override
-    public boolean deleteAll() throws DeleteException {
-        try (SqlSession session = sessionManager.getSqlSession(true)) {
-            int result = session.delete("deleteAll");
-            if (result == 0) {
-                return true;
-            } else {
-                throw new DeleteException("삭제된 값이 존재하지 않음");
-            }
-        } catch (DeleteException e) {
-            throw new DeleteException(e.getReason());
+            session.delete("deleteAll");
+            return true;
         }
     }
 
     @Override
-    public Integer deleteAllByCondition(MessageDto messageDto) {
+    public Integer deleteAllByCondition(ReceiveMessageDto receiveMessageDto) {
         return null;
     }
 
     @Override
     public boolean existsById(long messageId) throws SelectException {
         try (SqlSession session = sessionManager.getSqlSession(true)) {
-            if (session.selectOne("existsById", messageId)) {
+            int result = session.selectOne("existsById", messageId);
+            if (result > 0) {
                 return true;
             }
         }
@@ -100,13 +83,12 @@ public class ReceivedMessageRepositoryImpl implements ReceivedMessageRepository 
     }
 
     @Override
-    public MessageDto update(MessageDto messageDto) throws UpdateException {
+    public Integer update(ReceiveMessageDto receiveMessageDto) throws UpdateException {
         try (SqlSession session = sessionManager.getSqlSession(true)) {
-            if (messageDto != null) {
-                int result_int = session.update("update", messageDto);
-                if (result_int != 0) {
-                    messageDto = session.selectOne("selectById", messageDto.getId());
-                    return messageDto;
+            if (receiveMessageDto != null) {
+                int result = session.update("update", receiveMessageDto);
+                if (result != 0) {
+                    return result;
                 }
                 throw new UpdateException("The column you want to update does not exist in the table");
             }
@@ -115,12 +97,12 @@ public class ReceivedMessageRepositoryImpl implements ReceivedMessageRepository 
     }
 
     @Override
-    public MessageDto findById(long messageId) throws SelectException {
+    public ReceiveMessageDto findById(long messageId) throws SelectException {
         try (SqlSession session = sessionManager.getSqlSession(true)) {
             if (messageId != 0) {
-                MessageDto messageDto = session.selectOne("findById", messageId);
-                if (messageDto != null) {
-                    return messageDto;
+                ReceiveMessageDto receiveMessageDto = session.selectOne("findById", messageId);
+                if (receiveMessageDto != null) {
+                    return receiveMessageDto;
                 }
                 throw new SelectException("There is no value in the table");
             }
@@ -129,9 +111,9 @@ public class ReceivedMessageRepositoryImpl implements ReceivedMessageRepository 
     }
 
     @Override
-    public List<MessageDto> findAll() throws SelectException {
+    public List<ReceiveMessageDto> findAll() throws SelectException {
         try (SqlSession session = sessionManager.getSqlSession(true)) {
-            List<MessageDto> list = session.selectList("selectAll");
+            List<ReceiveMessageDto> list = session.selectList("selectAll");
             if (list != null) {
                 return list;
             }
@@ -140,15 +122,15 @@ public class ReceivedMessageRepositoryImpl implements ReceivedMessageRepository 
     }
 
     @Override
-    public MessageDto findAllById(List<MessageDto> list) {
+    public ReceiveMessageDto findAllById(List<ReceiveMessageDto> list) {
         return null;
     }
 
 
     @Override
-    public Integer save(MessageDto messageDto) throws InsertException {
+    public Integer save(ReceiveMessageDto receiveMessageDto) throws InsertException {
         try (SqlSession session = sessionManager.getSqlSession(true)) {
-            int result = session.insert("save", messageDto);
+            int result = session.insert("save", receiveMessageDto);
             if (result > 0) {
                 return result;
             }
@@ -157,11 +139,13 @@ public class ReceivedMessageRepositoryImpl implements ReceivedMessageRepository 
     }
 
     @Override
-    public Integer saveAll(List<MessageDto> list) throws InsertException {
+    public Integer saveAll(List<ReceiveMessageDto> list) throws InsertException {
         try (SqlSession session = sessionManager.getSqlSession(true)) {
-            int result = session.insert("saveAll", list);
-            if (list.size() == result) {
-                return result;
+            if (list.size() != 0 && list != null) {
+                int result = session.insert("saveAll", list);
+                if (list.size() == result) {
+                    return result;
+                }
             }
             throw new InsertException("InsertAll Error");
         } catch (InsertException e) {

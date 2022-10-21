@@ -5,7 +5,7 @@
 
     <!--    마이바티스 에서 insert, update, delte의 return 은 int-->
 
-    <update id="createReceivedTable">
+    <update id="createTable">
         CREATE TABLE IF NOT EXISTS received_message_from_agent
         (
             ID                BIGSERIAL PRIMARY KEY NOT NULL,
@@ -16,13 +16,10 @@
             FROM_PHONE_NUMBER VARCHAR(32)           NOT NULL,
             MESSAGE_CONTENT   TEXT                  NOT NULL
         );
-    </update>
-
-    <update id="createSendTable">
         CREATE TABLE IF NOT EXISTS send_message_from_gateway_to_telelcom
         (
             ID          BIGSERIAL PRIMARY KEY NOT NULL,
-            RECEIVED_ID BIGINT                NOT NULL,
+            RECEIVED_ID BIGINT                NOT NULL references received_message_from_agent (ID),
             STATUS      INT                   NOT NULL,
             RESULT      VARCHAR(20)           NULL
         );
@@ -30,8 +27,7 @@
 
     <select id="count" resultType="java.lang.Integer">
         SELECT COUNT(*)
-        FROM received_message_from_agent;
-
+        FROM received_message_from_agent
     </select>
 
     <delete id="deleteById" parameterType="_long">
@@ -40,42 +36,42 @@
         WHERE ID = #{id}
     </delete>
 
-    <delete id="delete" parameterType="kr.nanoit.model.message.MessageDto">
+    <delete id="delete" parameterType="kr.nanoit.model.message.ReceiveMessageDto">
         DELETE
         FROM received_message_from_agent
         WHERE ID = #{id}
-          AND MESSAGE_TYPE = #{message_type}
-          AND RECEIVED_TIME = #{received_time}
-          AND SENDER_AGENT_ID = #{sender_agent_id}
-          AND TO_PHONE_NUMBER = #{to_phone_number}
-          AND FROM_PHONE_NUMBER = #{from_phone_number}
-          AND MESSAGE_CONTENT = #{message_content}
     </delete>
 
+
     <delete id="deleteAll">
-        TRUNCATE TABLE received_message_from_agent;
+        DELETE
+        FROM received_message_from_agent;
     </delete>
 
     <delete id="deleteAllByCondition">
 
     </delete>
 
-    <select id="existsById" parameterType="_long" resultType="boolean">
+    <select id="existsById" parameterType="_long" resultType="_int">
         SELECT *
         FROM received_message_from_agent
         WHERE ID = #{id};
 
     </select>
 
-    <update id="update" parameterType="kr.nanoit.model.message.MessageDto">
+    <update id="update" parameterType="kr.nanoit.model.message.ReceiveMessageDto">
         UPDATE received_message_from_agent
-        SET SENDER  = #{sender},
-            CONTENT = #{content}
+        SET message_type      = #{message_type},
+            received_time     = #{received_time},
+            sender_agent_id   = #{sender_agent_id},
+            to_phone_number   = #{to_phone_number},
+            from_phone_number = #{from_phone_number},
+            message_content   = #{message_content}
         WHERE ID = #{id}
     </update>
 
     <select id="findById" parameterType="_long"
-            resultType="kr.nanoit.model.message.MessageDto">
+            resultType="kr.nanoit.model.message.ReceiveMessageDto">
         SELECT message_type,
                received_time,
                sender_agent_id,
@@ -91,7 +87,8 @@
         FROM received_message_from_agent;
     </select>
 
-    <insert id="save" parameterType="kr.nanoit.model.message.MessageDto" useGeneratedKeys="true" keyProperty="id">
+    <insert id="save" parameterType="kr.nanoit.model.message.ReceiveMessageDto" useGeneratedKeys="true"
+            keyProperty="id">
         INSERT INTO received_message_from_agent (message_type, received_time, sender_agent_id, to_phone_number,
                                                  from_phone_number, message_content)
         VALUES (#{message_type}, #{received_time}, #{sender_agent_id}, #{to_phone_number}, #{from_phone_number},
@@ -109,10 +106,6 @@
             )
         </foreach>
     </insert>
-
-
-
-
 
 
 </mapper>
