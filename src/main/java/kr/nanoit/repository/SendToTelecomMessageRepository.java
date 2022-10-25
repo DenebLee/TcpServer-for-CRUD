@@ -1,6 +1,6 @@
 package kr.nanoit.repository;
 
-import kr.nanoit.model.message.SendMessageDto;
+import kr.nanoit.model.message.SendMessage;
 import kr.nanoit.old.exception.message.DeleteException;
 import kr.nanoit.old.exception.message.InsertException;
 import kr.nanoit.old.exception.message.SelectException;
@@ -17,15 +17,15 @@ public interface SendToTelecomMessageRepository {
 
     Integer count() throws SelectException;
 
-    boolean delete(long id);
+    boolean deleteById(long id);
 
     boolean deleteAll() throws DeleteException;
 
-    Integer save(SendMessageDto sendMessageDto) throws SelectException;
+    Integer save(SendMessage sendMessage) throws SelectException;
 
-    Integer saveAll(List<SendMessageDto> list) throws InsertException;
+    Integer saveAll(List<SendMessage> list) throws InsertException;
 
-    Integer update(SendMessageDto sendMessageDto) throws UpdateException;
+    Integer update(SendMessage sendMessage) throws UpdateException;
 
-    SendMessageDto findById(long id) throws SelectException;
+    SendMessage findById(long id) throws SelectException;
 }

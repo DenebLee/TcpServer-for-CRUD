@@ -4,7 +4,7 @@ import kr.nanoit.old.exception.message.DeleteException;
 import kr.nanoit.old.exception.message.InsertException;
 import kr.nanoit.old.exception.message.SelectException;
 import kr.nanoit.old.exception.message.UpdateException;
-import kr.nanoit.model.message.ReceiveMessageDto;
+import kr.nanoit.model.message.ReceiveMessage;
 
 import java.io.IOException;
 import java.util.List;
@@ -38,21 +38,21 @@ public interface ReceivedMessageRepository {
 
     boolean deleteAll() throws DeleteException;
 
-    Integer deleteAllByCondition(ReceiveMessageDto receiveMessageDto);
+    Integer deleteAllByCondition(ReceiveMessage receiveMessage);
 
-    Integer update(ReceiveMessageDto receiveMessageDto) throws UpdateException;
+    Integer update(ReceiveMessage receiveMessage) throws UpdateException;
 
     boolean existsById(long messageId) throws SelectException;
 
-    ReceiveMessageDto findById(long messageId) throws SelectException;
+    ReceiveMessage findById(long messageId) throws SelectException;
 
-    List<ReceiveMessageDto> findAll() throws SelectException;
+    List<ReceiveMessage> findAll() throws SelectException;
 
-    ReceiveMessageDto findAllById(List<ReceiveMessageDto> list);
+    ReceiveMessage findAllById(List<ReceiveMessage> list);
 
-    Integer save(ReceiveMessageDto receiveMessageDto) throws InsertException;
+    Integer save(ReceiveMessage receiveMessage) throws InsertException;
 
-    Integer saveAll(List<ReceiveMessageDto> list) throws InsertException;
+    Integer saveAll(List<ReceiveMessage> list) throws InsertException;
 
 
 }

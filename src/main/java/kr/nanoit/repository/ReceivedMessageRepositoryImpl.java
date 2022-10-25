@@ -1,7 +1,7 @@
 package kr.nanoit.repository;
 
 import kr.nanoit.core.db.DataBaseSessionManager;
-import kr.nanoit.model.message.ReceiveMessageDto;
+import kr.nanoit.model.message.ReceiveMessage;
 import kr.nanoit.old.exception.message.DeleteException;
 import kr.nanoit.old.exception.message.InsertException;
 import kr.nanoit.old.exception.message.SelectException;
@@ -67,7 +67,7 @@ public class ReceivedMessageRepositoryImpl implements ReceivedMessageRepository 
     }
 
     @Override
-    public Integer deleteAllByCondition(ReceiveMessageDto receiveMessageDto) {
+    public Integer deleteAllByCondition(ReceiveMessage receiveMessage) {
         return null;
     }
 
@@ -83,10 +83,10 @@ public class ReceivedMessageRepositoryImpl implements ReceivedMessageRepository 
     }
 
     @Override
-    public Integer update(ReceiveMessageDto receiveMessageDto) throws UpdateException {
+    public Integer update(ReceiveMessage receiveMessage) throws UpdateException {
         try (SqlSession session = sessionManager.getSqlSession(true)) {
-            if (receiveMessageDto != null) {
-                int result = session.update("update", receiveMessageDto);
+            if (receiveMessage != null) {
+                int result = session.update("update", receiveMessage);
                 if (result != 0) {
                     return result;
                 }
@@ -97,12 +97,12 @@ public class ReceivedMessageRepositoryImpl implements ReceivedMessageRepository 
     }
 
     @Override
-    public ReceiveMessageDto findById(long messageId) throws SelectException {
+    public ReceiveMessage findById(long messageId) throws SelectException {
         try (SqlSession session = sessionManager.getSqlSession(true)) {
             if (messageId != 0) {
-                ReceiveMessageDto receiveMessageDto = session.selectOne("findById", messageId);
-                if (receiveMessageDto != null) {
-                    return receiveMessageDto;
+                ReceiveMessage receiveMessage = session.selectOne("findById", messageId);
+                if (receiveMessage != null) {
+                    return receiveMessage;
                 }
                 throw new SelectException("There is no value in the table");
             }
@@ -111,9 +111,9 @@ public class ReceivedMessageRepositoryImpl implements ReceivedMessageRepository 
     }
 
     @Override
-    public List<ReceiveMessageDto> findAll() throws SelectException {
+    public List<ReceiveMessage> findAll() throws SelectException {
         try (SqlSession session = sessionManager.getSqlSession(true)) {
-            List<ReceiveMessageDto> list = session.selectList("selectAll");
+            List<ReceiveMessage> list = session.selectList("selectAll");
             if (list != null) {
                 return list;
             }
@@ -122,15 +122,15 @@ public class ReceivedMessageRepositoryImpl implements ReceivedMessageRepository 
     }
 
     @Override
-    public ReceiveMessageDto findAllById(List<ReceiveMessageDto> list) {
+    public ReceiveMessage findAllById(List<ReceiveMessage> list) {
         return null;
     }
 
 
     @Override
-    public Integer save(ReceiveMessageDto receiveMessageDto) throws InsertException {
+    public Integer save(ReceiveMessage receiveMessage) throws InsertException {
         try (SqlSession session = sessionManager.getSqlSession(true)) {
-            int result = session.insert("save", receiveMessageDto);
+            int result = session.insert("save", receiveMessage);
             if (result > 0) {
                 return result;
             }
@@ -139,7 +139,7 @@ public class ReceivedMessageRepositoryImpl implements ReceivedMessageRepository 
     }
 
     @Override
-    public Integer saveAll(List<ReceiveMessageDto> list) throws InsertException {
+    public Integer saveAll(List<ReceiveMessage> list) throws InsertException {
         try (SqlSession session = sessionManager.getSqlSession(true)) {
             if (list.size() != 0 && list != null) {
                 int result = session.insert("saveAll", list);

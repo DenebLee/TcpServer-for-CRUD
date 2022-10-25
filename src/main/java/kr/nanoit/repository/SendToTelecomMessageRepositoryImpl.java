@@ -1,7 +1,7 @@
 package kr.nanoit.repository;
 
 import kr.nanoit.core.db.DataBaseSessionManager;
-import kr.nanoit.model.message.SendMessageDto;
+import kr.nanoit.model.message.SendMessage;
 import kr.nanoit.old.exception.message.InsertException;
 import kr.nanoit.old.exception.message.SelectException;
 import kr.nanoit.old.exception.message.UpdateException;
@@ -41,7 +41,7 @@ public class SendToTelecomMessageRepositoryImpl implements SendToTelecomMessageR
     }
 
     @Override
-    public boolean delete(long id) {
+    public boolean deleteById(long id) {
         try (SqlSession session = sessionManager.getSqlSession(true)) {
             if (id != 0) {
                 int result = session.delete("send_deleteById", id);
@@ -62,9 +62,9 @@ public class SendToTelecomMessageRepositoryImpl implements SendToTelecomMessageR
     }
 
     @Override
-    public Integer save(SendMessageDto sendMessageDto) throws SelectException {
+    public Integer save(SendMessage sendMessage) throws SelectException {
         try (SqlSession session = sessionManager.getSqlSession(true)) {
-            int result = session.insert("send_save", sendMessageDto);
+            int result = session.insert("send_save", sendMessage);
             if (result > 0) {
                 return result;
             }
@@ -73,7 +73,7 @@ public class SendToTelecomMessageRepositoryImpl implements SendToTelecomMessageR
     }
 
     @Override
-    public Integer saveAll(List<SendMessageDto> list) throws InsertException {
+    public Integer saveAll(List<SendMessage> list) throws InsertException {
         try (SqlSession session = sessionManager.getSqlSession(true)) {
             if (list.size() != 0 && list != null) {
                 int result = session.insert("send_saveAll", list);
@@ -88,9 +88,9 @@ public class SendToTelecomMessageRepositoryImpl implements SendToTelecomMessageR
     }
 
     @Override
-    public Integer update(SendMessageDto sendMessageDto) throws UpdateException {
+    public Integer update(SendMessage sendMessage) throws UpdateException {
         try (SqlSession session = sessionManager.getSqlSession(true)) {
-            int result = session.update("send_update");
+            int result = session.update("send_update", sendMessage);
             if (result > 0) {
                 return result;
             }
@@ -99,9 +99,9 @@ public class SendToTelecomMessageRepositoryImpl implements SendToTelecomMessageR
     }
 
     @Override
-    public SendMessageDto findById(long id) throws SelectException {
+    public SendMessage findById(long id) throws SelectException {
         try (SqlSession session = sessionManager.getSqlSession(true)) {
-            SendMessageDto dto = new SendMessageDto();
+            SendMessage dto = new SendMessage();
             dto = session.selectOne("send_findById", id);
             if (dto != null) {
                 return dto;

@@ -1,5 +1,7 @@
 package kr.nanoit.core.db;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.io.Resources;
@@ -20,7 +22,6 @@ import java.util.Properties;
 
 public class DataBaseSessionManager {
     private final SqlSessionFactory sqlSessionFactory;
-
 
     public DataBaseSessionManager(Properties properties) throws IOException {
 

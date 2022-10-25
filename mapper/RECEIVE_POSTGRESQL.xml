@@ -8,20 +8,22 @@
     <update id="createTable">
         CREATE TABLE IF NOT EXISTS received_message_from_agent
         (
-            ID                BIGSERIAL PRIMARY KEY NOT NULL,
+            RECEIVED_ID       BIGSERIAL PRIMARY KEY NOT NULL,
             MESSAGE_TYPE      VARCHAR(8)            NOT NULL,
+            MESSAGE_STATUS    INT                   NOT NULL,
             RECEIVED_TIME     TIMESTAMP             NOT NULL,
             SENDER_AGENT_ID   INT                   NOT NULL,
             TO_PHONE_NUMBER   VARCHAR(32)           NOT NULL,
             FROM_PHONE_NUMBER VARCHAR(32)           NOT NULL,
             MESSAGE_CONTENT   TEXT                  NOT NULL
         );
-        CREATE TABLE IF NOT EXISTS send_message_from_gateway_to_telelcom
+        CREATE TABLE IF NOT EXISTS send_message_from_gateway_to_telecom
         (
-            ID          BIGSERIAL PRIMARY KEY NOT NULL,
-            RECEIVED_ID BIGINT                NOT NULL references received_message_from_agent (ID),
-            STATUS      INT                   NOT NULL,
-            RESULT      VARCHAR(20)           NULL
+            SEND_ID        BIGSERIAL PRIMARY KEY NOT NULL,
+            MESSAGE_TYPE   VARCHAR(8)            NOT NULL,
+            RECEIVED_ID    BIGINT                NOT NULL,
+            MESSAGE_STATUS INT                   NOT NULL,
+            RESULT         VARCHAR(24)           NULL
         );
     </update>
 
@@ -33,13 +35,13 @@
     <delete id="deleteById" parameterType="_long">
         DELETE
         from received_message_from_agent
-        WHERE ID = #{id}
+        WHERE RECEIVED_ID = #{received_id}
     </delete>
 
-    <delete id="delete" parameterType="kr.nanoit.model.message.ReceiveMessageDto">
+    <delete id="delete" parameterType="kr.nanoit.model.message.ReceiveMessage">
         DELETE
         FROM received_message_from_agent
-        WHERE ID = #{id}
+        WHERE RECEIVED_ID = #{received_id}
     </delete>
 
 
@@ -55,31 +57,33 @@
     <select id="existsById" parameterType="_long" resultType="_int">
         SELECT *
         FROM received_message_from_agent
-        WHERE ID = #{id};
+        WHERE RECEIVED_ID = #{received_id};
 
     </select>
 
-    <update id="update" parameterType="kr.nanoit.model.message.ReceiveMessageDto">
+    <update id="update" parameterType="kr.nanoit.model.message.ReceiveMessage">
         UPDATE received_message_from_agent
         SET message_type      = #{message_type},
+            message_status    = #{message_status},
             received_time     = #{received_time},
             sender_agent_id   = #{sender_agent_id},
             to_phone_number   = #{to_phone_number},
             from_phone_number = #{from_phone_number},
             message_content   = #{message_content}
-        WHERE ID = #{id}
+        WHERE RECEIVED_ID = #{received_id}
     </update>
 
     <select id="findById" parameterType="_long"
-            resultType="kr.nanoit.model.message.ReceiveMessageDto">
+            resultType="kr.nanoit.model.message.ReceiveMessage">
         SELECT message_type,
+               message_status,
                received_time,
                sender_agent_id,
                to_phone_number,
                from_phone_number,
                message_content
         FROM received_message_from_agent
-        WHERE ID = #{id}
+        WHERE RECEIVED_ID = #{received_id}
     </select>
 
     <select id="findAll">
@@ -87,21 +91,23 @@
         FROM received_message_from_agent;
     </select>
 
-    <insert id="save" parameterType="kr.nanoit.model.message.ReceiveMessageDto" useGeneratedKeys="true"
-            keyProperty="id">
-        INSERT INTO received_message_from_agent (message_type, received_time, sender_agent_id, to_phone_number,
-                                                 from_phone_number, message_content)
-        VALUES (#{message_type}, #{received_time}, #{sender_agent_id}, #{to_phone_number}, #{from_phone_number},
+    <insert id="save" parameterType="kr.nanoit.model.message.ReceiveMessage" useGeneratedKeys="true"
+            keyProperty="received_id">
+        INSERT INTO received_message_from_agent (message_type, message_status, received_time, sender_agent_id,
+                                                 to_phone_number,from_phone_number, message_content)
+        VALUES (#{message_type}, #{message_status}, #{received_time}, #{sender_agent_id}, #{to_phone_number},
+                #{from_phone_number},
                 #{message_content})
     </insert>
 
-    <insert id="saveAll" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO received_message_from_agent(message_type, received_time, sender_agent_id,
+    <insert id="saveAll" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="received_id">
+        INSERT INTO received_message_from_agent(message_type, message_status,received_time, sender_agent_id,
         to_phone_number,from_phone_number, message_content)
         VALUES
         <foreach collection="list" item="item" separator=",">
             (
-            #{item.message_type}, #{item.received_time}, #{item.sender_agent_id}, #{item.to_phone_number},
+            #{item.message_type},#{message_status}, #{item.received_time}, #{item.sender_agent_id},
+            #{item.to_phone_number},
             #{item.from_phone_number},#{item.message_content}
             )
         </foreach>

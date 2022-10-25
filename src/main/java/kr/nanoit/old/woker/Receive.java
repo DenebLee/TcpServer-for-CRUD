@@ -1,7 +1,7 @@
 package kr.nanoit.old.woker;
 
 
-import kr.nanoit.model.message.ReceiveMessageDto;
+import kr.nanoit.model.message.ReceiveMessage;
 import kr.nanoit.model.message.MessageType;
 import kr.nanoit.old.util.Crypt;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +11,7 @@ public class Receive implements Runnable {
 
     //    private SocketUtil socketUtil;
     private Crypt crypt;
-    private ReceiveMessageDto receiveMessageDto;
+    private ReceiveMessage receiveMessage;
 
 //    public Receive(SocketUtil socketUtil) {
 //        this.socketUtil = socketUtil;

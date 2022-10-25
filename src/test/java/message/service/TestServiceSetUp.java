@@ -1,4 +1,4 @@
-package message;
+package message.service;
 
 import kr.nanoit.repository.ReceivedMessageRepository;
 import kr.nanoit.repository.SendToTelecomMessageRepository;
@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 
-public class TestSetUp {
+public class TestServiceSetUp {
     @Container
     static PostgreSQLContainer postgreSQLContainer = new PostgreSQLContainer("postgres:14.5-alpine");
     Properties properties;
@@ -17,7 +17,7 @@ public class TestSetUp {
     public static ReceivedMessageRepository receivedMessageRepository;
     public static SendToTelecomMessageRepository sendToTelecomMessageRepository;
 
-    public TestSetUp(String type) throws IOException {
+    public TestServiceSetUp(String type) throws IOException {
         properties = new Properties();
         properties.setProperty("driver", postgreSQLContainer.getDriverClassName());
         properties.setProperty("url", postgreSQLContainer.getJdbcUrl());
