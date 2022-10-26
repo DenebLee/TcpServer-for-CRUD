@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 
 public class ReceiveMessage implements Message {
     private MessageType message_type;
-    private Integer message_status;
+    private Integer message_status ;
 
     private long received_id;
     private Timestamp received_time;

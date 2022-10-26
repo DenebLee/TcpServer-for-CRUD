@@ -37,25 +37,28 @@ public class ReceivedMessageServiceImpl implements ReceivedMessageService {
 
     @Override
     public List<ReceiveMessage> selectAllMessage() {
-        List<ReceiveMessage> selectDataList = null;
+        List<ReceiveMessage> data = null;
         try {
-            return receivedMessageRepository.findAll().stream().filter(receiveMessage -> {
+            data = receivedMessageRepository.findAll().stream().filter(receiveMessage -> {
                 if (receiveMessage.getMessage_status().equals(MessageStatus.WAIT)) {
                     receiveMessage.setMessage_status(MessageStatus.SELECTED);
-                    return selectDataList.add(receiveMessage);
+                    return true;
+                } else {
+                    return false;
                 }
-                return false;
             }).collect(Collectors.toList());
-        } catch (SelectException e) {
-            throw new RuntimeException(e);
+            System.out.println(data);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return data;
     }
 
     @Override
-    public ReceiveMessage insertMessage(DataBaseQueueList list) throws InsertException {
+    public void insertMessage(DataBaseQueueList list) throws InsertException {
         Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-        if (list != null) {
-            try {
+        try {
+            if (list != null) {
                 ReceiveMessage data = list.getReceiveMessageLinkedBlockingQueue().poll(1000, TimeUnit.MICROSECONDS);
                 if (data != null) {
                     data.setMessage_status(MessageStatus.WAIT);
@@ -66,14 +69,10 @@ public class ReceivedMessageServiceImpl implements ReceivedMessageService {
                         log.warn("INSERT DB FAILED");
                     }
                 }
-            } catch (InsertException e) {
-                // 오류패킷 전달
-                e.getReason();
-            } catch (Exception e) {
-                e.printStackTrace();
             }
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
-        throw new InsertException("Serve Error");
     }
 
 

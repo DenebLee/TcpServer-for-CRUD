@@ -86,15 +86,21 @@
         WHERE RECEIVED_ID = #{received_id}
     </select>
 
-    <select id="findAll">
+    <select id="selectAll" resultType="kr.nanoit.model.message.ReceiveMessage">
         SELECT *
         FROM received_message_from_agent;
+    </select>
+
+    <select id="selectAllByStatus" parameterType="Integer">
+        SELECT *
+        FROM received_message_from_agent
+        WHERE MESSAGE_STATUS = #{message_status}
     </select>
 
     <insert id="save" parameterType="kr.nanoit.model.message.ReceiveMessage" useGeneratedKeys="true"
             keyProperty="received_id">
         INSERT INTO received_message_from_agent (message_type, message_status, received_time, sender_agent_id,
-                                                 to_phone_number,from_phone_number, message_content)
+                                                 to_phone_number, from_phone_number, message_content)
         VALUES (#{message_type}, #{message_status}, #{received_time}, #{sender_agent_id}, #{to_phone_number},
                 #{from_phone_number},
                 #{message_content})
@@ -106,7 +112,7 @@
         VALUES
         <foreach collection="list" item="item" separator=",">
             (
-            #{item.message_type},#{message_status}, #{item.received_time}, #{item.sender_agent_id},
+            #{item.message_type},#{item.message_status}, #{item.received_time}, #{item.sender_agent_id},
             #{item.to_phone_number},
             #{item.from_phone_number},#{item.message_content}
             )

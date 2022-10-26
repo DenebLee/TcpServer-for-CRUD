@@ -87,7 +87,7 @@ public class ReceivedMessageRepositoryImpl implements ReceivedMessageRepository 
         try (SqlSession session = sessionManager.getSqlSession(true)) {
             if (receiveMessage != null) {
                 int result = session.update("update", receiveMessage);
-                if (result != 0) {
+                if (result > 0) {
                     return result;
                 }
                 throw new UpdateException("The column you want to update does not exist in the table");
@@ -122,8 +122,14 @@ public class ReceivedMessageRepositoryImpl implements ReceivedMessageRepository 
     }
 
     @Override
-    public ReceiveMessage findAllById(List<ReceiveMessage> list) {
-        return null;
+    public List<ReceiveMessage> findAllByStatus(Integer status) throws SelectException {
+        try (SqlSession session = sessionManager.getSqlSession(true)) {
+            List<ReceiveMessage> list = session.selectList("selectAllByStatus", status);
+            if (list != null) {
+                return list;
+            }
+            throw new SelectException("The colum you want to select does not exist int the table");
+        }
     }
 
 

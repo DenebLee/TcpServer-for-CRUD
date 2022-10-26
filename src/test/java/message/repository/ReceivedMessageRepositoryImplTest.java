@@ -32,7 +32,6 @@ class ReceivedMessageRepositoryImplTest extends TestRepositorySetUp {
     void setUp() throws DeleteException, IOException {
         receivedMessageRepository = ReceivedMessageRepository.createMybatis(properties);
         receivedMessageRepository.deleteAll();
-        System.out.println(MessageStatus.WAIT);
     }
 
     @Test
@@ -52,6 +51,26 @@ class ReceivedMessageRepositoryImplTest extends TestRepositorySetUp {
         assertThat(actual.getFrom_phone_number()).isEqualTo(expected.getFrom_phone_number());
         assertThat(actual.getTo_phone_number()).isEqualTo(expected.getTo_phone_number());
         assertThat(actual.getMessage_content()).isEqualTo(expected.getMessage_content());
+    }
+
+    @Test
+    @DisplayName("RECEIVE -> FIND ALL DATA")
+    void should_receive_select_all_data() throws InsertException, SelectException {
+        // given
+        int count = 100;
+        List<ReceiveMessage> expectedData = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            expectedData.add(new ReceiveMessage(MessageType.SMS, MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), i, "010-4040-414" + i, "010-4444-555" + i, "테스트"));
+        }
+        receivedMessageRepository.saveAll(expectedData);
+        System.out.println(expectedData);
+
+        // when
+        List<ReceiveMessage> actual = receivedMessageRepository.findAll();
+
+        // then
+        assertThat(actual.size()).isEqualTo(count);
+        assertThat(actual.size()).isEqualTo(receivedMessageRepository.count());
     }
 
     @Test
@@ -128,8 +147,11 @@ class ReceivedMessageRepositoryImplTest extends TestRepositorySetUp {
         // given
         ReceiveMessage originalData = new ReceiveMessage(MessageType.SMS, MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), 4, "010-4040-4141", "010-4444-5555", "테스트");
         receivedMessageRepository.save(originalData);
+        // 테이블에 칼럼 1개 생성
         long id = originalData.getReceived_id();
-        ReceiveMessage expected = new ReceiveMessage(MessageType.SMS, MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), 2, "010101010", "010-4444-5555", "안녕하세요 저는 이정섭입니다");
+        // 생성된 칼럼의 pk key get
+        ReceiveMessage expected = new ReceiveMessage(MessageType.SMS, MessageStatus.WAIT, id, new Timestamp(System.currentTimeMillis()), 2, "010101010", "010-4444-5555", "안녕하세요 저는 이정섭입니다");
+        // 수정 하고자 하는 데이터 세팅
 
         // when
         int actual = receivedMessageRepository.update(expected);

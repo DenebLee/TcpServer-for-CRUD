@@ -48,7 +48,7 @@ public interface ReceivedMessageRepository {
 
     List<ReceiveMessage> findAll() throws SelectException;
 
-    ReceiveMessage findAllById(List<ReceiveMessage> list);
+    List<ReceiveMessage> findAllByStatus(Integer status) throws SelectException;
 
     Integer save(ReceiveMessage receiveMessage) throws InsertException;
 
