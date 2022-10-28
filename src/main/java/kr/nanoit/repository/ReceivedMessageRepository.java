@@ -1,9 +1,9 @@
 package kr.nanoit.repository;
 
-import kr.nanoit.old.exception.message.DeleteException;
-import kr.nanoit.old.exception.message.InsertException;
-import kr.nanoit.old.exception.message.SelectException;
-import kr.nanoit.old.exception.message.UpdateException;
+import kr.nanoit.exception.message.DeleteException;
+import kr.nanoit.exception.message.InsertException;
+import kr.nanoit.exception.message.SelectException;
+import kr.nanoit.exception.message.UpdateException;
 import kr.nanoit.model.message.ReceiveMessage;
 
 import java.io.IOException;
@@ -28,7 +28,7 @@ import java.util.Properties;
  */
 
 public interface ReceivedMessageRepository {
-    static ReceivedMessageRepository createMybatis(Properties properties) throws IOException {
+    static ReceivedMessageRepository createReceiveRepository(Properties properties) throws IOException {
         return new ReceivedMessageRepositoryImpl(properties);
     }
 

@@ -2,10 +2,10 @@ package kr.nanoit.repository;
 
 import kr.nanoit.core.db.DataBaseSessionManager;
 import kr.nanoit.model.message.ReceiveMessage;
-import kr.nanoit.old.exception.message.DeleteException;
-import kr.nanoit.old.exception.message.InsertException;
-import kr.nanoit.old.exception.message.SelectException;
-import kr.nanoit.old.exception.message.UpdateException;
+import kr.nanoit.exception.message.DeleteException;
+import kr.nanoit.exception.message.InsertException;
+import kr.nanoit.exception.message.SelectException;
+import kr.nanoit.exception.message.UpdateException;
 import org.apache.ibatis.session.SqlSession;
 
 import java.io.IOException;

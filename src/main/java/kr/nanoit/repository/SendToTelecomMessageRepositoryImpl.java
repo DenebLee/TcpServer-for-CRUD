@@ -2,9 +2,9 @@ package kr.nanoit.repository;
 
 import kr.nanoit.core.db.DataBaseSessionManager;
 import kr.nanoit.model.message.SendMessage;
-import kr.nanoit.old.exception.message.InsertException;
-import kr.nanoit.old.exception.message.SelectException;
-import kr.nanoit.old.exception.message.UpdateException;
+import kr.nanoit.exception.message.InsertException;
+import kr.nanoit.exception.message.SelectException;
+import kr.nanoit.exception.message.UpdateException;
 import org.apache.ibatis.session.SqlSession;
 
 import java.io.IOException;
@@ -93,20 +93,31 @@ public class SendToTelecomMessageRepositoryImpl implements SendToTelecomMessageR
             int result = session.update("send_update", sendMessage);
             if (result > 0) {
                 return result;
+            } else {
+                throw new UpdateException("왜 안되는건데 " + result);
             }
         }
-        throw new UpdateException("Send Message update Error");
     }
 
     @Override
     public SendMessage findById(long id) throws SelectException {
         try (SqlSession session = sessionManager.getSqlSession(true)) {
-            SendMessage dto = new SendMessage();
-            dto = session.selectOne("send_findById", id);
+            SendMessage dto = session.selectOne("send_findById", id);
             if (dto != null) {
                 return dto;
             }
         }
         throw new SelectException("FindById error");
+    }
+
+    @Override
+    public List<SendMessage> findAll() throws SelectException {
+        try (SqlSession session = sessionManager.getSqlSession(true)) {
+            List<SendMessage> list = session.selectList("send_findAll");
+            if (list != null) {
+                return list;
+            }
+        }
+        throw new SelectException("There's no data on the table you're trying to find");
     }
 }

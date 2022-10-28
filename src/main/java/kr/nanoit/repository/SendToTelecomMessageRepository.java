@@ -1,10 +1,10 @@
 package kr.nanoit.repository;
 
 import kr.nanoit.model.message.SendMessage;
-import kr.nanoit.old.exception.message.DeleteException;
-import kr.nanoit.old.exception.message.InsertException;
-import kr.nanoit.old.exception.message.SelectException;
-import kr.nanoit.old.exception.message.UpdateException;
+import kr.nanoit.exception.message.DeleteException;
+import kr.nanoit.exception.message.InsertException;
+import kr.nanoit.exception.message.SelectException;
+import kr.nanoit.exception.message.UpdateException;
 
 import java.io.IOException;
 import java.util.List;
@@ -28,4 +28,6 @@ public interface SendToTelecomMessageRepository {
     Integer update(SendMessage sendMessage) throws UpdateException;
 
     SendMessage findById(long id) throws SelectException;
+
+    List<SendMessage> findAll() throws SelectException;
 }
