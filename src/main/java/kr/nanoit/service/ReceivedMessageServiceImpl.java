@@ -1,8 +1,7 @@
 package kr.nanoit.service;
 
-import kr.nanoit.core.db.DataBaseQueueList;
+
 import kr.nanoit.model.message.MessageStatus;
-import kr.nanoit.controller.SocketUtil;
 import kr.nanoit.exception.message.InsertException;
 import kr.nanoit.exception.message.SelectException;
 import kr.nanoit.model.message.ReceiveMessage;
@@ -12,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -55,34 +53,61 @@ public class ReceivedMessageServiceImpl implements ReceivedMessageService {
     }
 
     @Override
-    public Integer insertMessage(DataBaseQueueList dataBaseQueueList) throws InsertException {
+    public long insertMessage(ReceiveMessage receiveMessage) {
         Timestamp currentTime = new Timestamp(System.currentTimeMillis());
         try {
-            if (dataBaseQueueList.getReceiveMessageLinkedBlockingQueue() != null) {
-                ReceiveMessage data = dataBaseQueueList.getReceiveMessageLinkedBlockingQueue().poll(1000, TimeUnit.MICROSECONDS);
-                // 일정 시간 기다렸다가 대기후 객체 추가
-                if (data != null) {
-                    data.setMessage_status(MessageStatus.WAIT);
-                    data.setReceived_time(currentTime);
-                    int a = receive.save(data);
-                    if (a > 0) {
-                        log.info("INSERT DB COMPLETE MESSAGE_TYPE : {} , MESSAGE_STATUS : {} , RECEIVED_ID : {} , RECEIVED_TIME : {} , SENDER_AGENT_ID : {} , TO_PHONE_NUMBER : {}, FROM_PHONE_NUMBER : {}, MESSAGE_CONTENT : {}", data.getMessageType(), data.getMessage_status(), data.getReceived_id(), data.getReceived_time(), data.getSender_agent_id(), data.getTo_phone_number(), data.getFrom_phone_number(), data.getMessage_content());
-                        return a;
-                    } else {
-                        log.warn("INSERT DB FAILED");
-                        throw new InsertException("Insert failed");
-                    }
+            if (receiveMessage != null) {
+                receiveMessage.setMessage_status(MessageStatus.WAIT);
+                receiveMessage.setReceived_time(currentTime);
+                int result = receive.save(receiveMessage);
+                if (result > 0) {
+                    log.info("INSERT DB COMPLETE MESSAGE_TYPE : {} , MESSAGE_STATUS : {} , RECEIVED_ID : {} , RECEIVED_TIME : {} , SENDER_AGENT_ID : {} , TO_PHONE_NUMBER : {}, FROM_PHONE_NUMBER : {}, MESSAGE_CONTENT : {}", receiveMessage.getMessageType(), receiveMessage.getMessage_status(), receiveMessage.getReceived_id(), receiveMessage.getReceived_time(), receiveMessage.getSender_agent_id(), receiveMessage.getTo_phone_number(), receiveMessage.getFrom_phone_number(), receiveMessage.getMessage_content());
+                    return receiveMessage.getReceived_id();
+                } else {
+                    log.warn("INSERT DB FAILED");
+                    throw new InsertException("Insert failed");
                 }
             }
-        } catch (InterruptedException e) {
+        } catch (InsertException e) {
             throw new RuntimeException(e);
         }
-        return null;
+        return 0;
+    }
+
+    @Override
+    public boolean referenceReceiveDB(ReceiveMessage receiveMessage) {
+        try {
+            if (receive.findById(receiveMessage.getReceived_id()) == receiveMessage) {
+                receiveMessage.setMessage_status(MessageStatus.SELECTED);
+                int result = receive.update(receiveMessage);
+                if (result == 1) {
+                    if (receive.findById(receiveMessage.getReceived_id()).getMessage_status() == MessageStatus.SELECTED) {
+                        return true;
+                    }
+                }
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 
     @Override
     public boolean isNotExist() {
+        return false;
+    }
+
+    @Override
+    public boolean isAlive() {
+        try {
+            if (receive.alive()) {
+                log.info("THE SERVER IS ALIVE");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return false;
     }
 

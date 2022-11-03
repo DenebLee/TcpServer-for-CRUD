@@ -1,16 +1,14 @@
 package kr.nanoit.service;
 
-import kr.nanoit.core.db.DataBaseQueueList;
+import kr.nanoit.exception.message.UpdateException;
 import kr.nanoit.model.message.MessageStatus;
 import kr.nanoit.model.message.SendMessage;
-import kr.nanoit.controller.SocketUtil;
 import kr.nanoit.exception.message.SelectException;
 import kr.nanoit.repository.SendToTelecomMessageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -36,7 +34,7 @@ public class SendToTelecomMessageServiceImpl implements SendToTelecomMessageServ
         return data;
     }
 
-    // getSelectedMessage와 기능이 겹치기에 구현 기
+
     @Override
     public List<SendMessage> getSendMessage() {
         return null;
@@ -44,26 +42,29 @@ public class SendToTelecomMessageServiceImpl implements SendToTelecomMessageServ
 
     @Override
     // Queue에 전달된
-    public void insertMessage(DataBaseQueueList dataBaseQueueList) {
+    public void insertMessage(SendMessage sendMessage) {
         try {
-            if (dataBaseQueueList.getSendMessageLinkedBlockingQueue() != null) {
-                SendMessage data = dataBaseQueueList.getSendMessageLinkedBlockingQueue().poll(1000, TimeUnit.MICROSECONDS);
-                if (data != null) {
-                    if (send.save(data) > 0) {
-                        log.info("INSERT DB COMPLETE, MESSAGE_TYPE : {}, MESSAGE_STATUS : {}, SEND_ID : {}, RECEIVE_ID : {}, RECEIVED_ID, RESULT : {}", data.getMessage_type(), data.getMessage_status(), data.getSend_id(), data.getReceived_id(), data.getResult());
-                    } else {
-                        log.warn("INSERT DB FAILED");
-                    }
-
+            if (sendMessage != null) {
+                if (send.save(sendMessage) > 0) {
+                    sendMessage.setResult("Success");
+                    send.update(sendMessage);
+                    log.info("INSERT DB COMPLETE, MESSAGE_TYPE : {}, MESSAGE_STATUS : {}, SEND_ID : {}, RECEIVE_ID : {}, RECEIVED_ID, RESULT : {}", sendMessage.getMessage_type(), sendMessage.getMessage_status(), sendMessage.getSend_id(), sendMessage.getReceived_id(), sendMessage.getResult());
+                } else {
+                    log.warn("INSERT DB FAILED");
                 }
             }
-        } catch (InterruptedException | SelectException e) {
+        } catch (SelectException | UpdateException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
     public boolean integrityCheck() {
+        return false;
+    }
+
+    @Override
+    public boolean isAlive() {
         return false;
     }
 }

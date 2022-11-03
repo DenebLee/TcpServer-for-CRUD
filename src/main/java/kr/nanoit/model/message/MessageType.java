@@ -4,7 +4,9 @@ public enum MessageType {
 
     SMS("SMS"),
 
-    NONE("NONE");
+    NONE("NONE"),
+
+    LOGIN("LOGIN");
 
     private final String property;
 

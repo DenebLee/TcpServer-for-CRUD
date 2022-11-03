@@ -1,8 +1,6 @@
 package kr.nanoit.service;
 
-import kr.nanoit.core.db.DataBaseQueueList;
 import kr.nanoit.model.message.SendMessage;
-import kr.nanoit.controller.SocketUtil;
 
 import java.util.List;
 
@@ -12,9 +10,11 @@ public interface SendToTelecomMessageService {
 
     List<SendMessage> getSendMessage();
 
-    void insertMessage(DataBaseQueueList dataBaseQueueList);
+    void insertMessage(SendMessage sendMessage);
 
     boolean integrityCheck();
+
+    boolean isAlive();
 
 
 }

@@ -10,6 +10,7 @@ import lombok.*;
 
 public class SendMessage implements Message {
     private MessageType message_type;
+    private String protocol;
     private Integer message_status;
 
     private long send_id;

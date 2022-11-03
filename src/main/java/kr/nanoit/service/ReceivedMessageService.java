@@ -1,8 +1,8 @@
 package kr.nanoit.service;
 
-import kr.nanoit.core.db.DataBaseQueueList;
+
+import kr.nanoit.exception.message.SelectException;
 import kr.nanoit.model.message.ReceiveMessage;
-import kr.nanoit.controller.SocketUtil;
 import kr.nanoit.exception.message.InsertException;
 
 import java.util.List;
@@ -12,8 +12,12 @@ public interface ReceivedMessageService {
 
     List<ReceiveMessage> selectAllMessage();
 
-    Integer insertMessage(DataBaseQueueList dataBaseQueueList) throws InsertException;
+    long insertMessage(ReceiveMessage receiveMessage) throws InsertException;
+
+    boolean referenceReceiveDB(ReceiveMessage receiveMessage);
 
     boolean isNotExist();
+
+    boolean isAlive() throws SelectException;
 
 }

@@ -12,6 +12,7 @@ import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class SocketUtil extends SocketConfig {
+    private final Object receiveLock = new Object();
 
     @Getter
     LinkedBlockingQueue<ReceiveMessage> receiveMessageLinkedBlockingQueue;
@@ -19,7 +20,6 @@ public class SocketUtil extends SocketConfig {
     @Getter
     LinkedBlockingQueue<SendMessage> sendMessageLinkedBlockingQueue;
 
-    private final Object receiveLock = new Object();
 
     public SocketUtil(Socket socket) throws IOException {
         super();

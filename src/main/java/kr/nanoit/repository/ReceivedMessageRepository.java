@@ -54,5 +54,7 @@ public interface ReceivedMessageRepository {
 
     Integer saveAll(List<ReceiveMessage> list) throws InsertException;
 
+    boolean alive();
+
 
 }

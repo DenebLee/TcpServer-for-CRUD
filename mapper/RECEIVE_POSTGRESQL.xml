@@ -9,6 +9,7 @@
         CREATE TABLE IF NOT EXISTS received_message_from_agent
         (
             RECEIVED_ID       BIGSERIAL PRIMARY KEY NOT NULL,
+            PROTOCOL          VARCHAR(8)            NOT NULL,
             MESSAGE_TYPE      VARCHAR(8)            NOT NULL,
             MESSAGE_STATUS    INT                   NOT NULL,
             RECEIVED_TIME     TIMESTAMP             NOT NULL,
@@ -20,6 +21,7 @@
         CREATE TABLE IF NOT EXISTS send_message_from_gateway_to_telecom
         (
             SEND_ID        BIGSERIAL PRIMARY KEY NOT NULL,
+            PROTOCOL       VARCHAR(8)            NOT NULL,
             MESSAGE_TYPE   VARCHAR(8)            NOT NULL,
             RECEIVED_ID    BIGINT                NOT NULL,
             MESSAGE_STATUS INT                   NOT NULL,
@@ -64,6 +66,7 @@
     <update id="update" parameterType="kr.nanoit.model.message.ReceiveMessage">
         UPDATE received_message_from_agent
         SET message_type      = #{message_type},
+            protocol          = #{protocol},
             message_status    = #{message_status},
             received_time     = #{received_time},
             sender_agent_id   = #{sender_agent_id},
@@ -75,7 +78,8 @@
 
     <select id="findById" parameterType="_long"
             resultType="kr.nanoit.model.message.ReceiveMessage">
-        SELECT message_type,
+        SELECT protocol,
+               message_type,
                message_status,
                received_time,
                sender_agent_id,
@@ -99,25 +103,31 @@
 
     <insert id="save" parameterType="kr.nanoit.model.message.ReceiveMessage" useGeneratedKeys="true"
             keyProperty="received_id">
-        INSERT INTO received_message_from_agent (message_type, message_status, received_time, sender_agent_id,
+        INSERT INTO received_message_from_agent (protocol, message_type, message_status, received_time, sender_agent_id,
                                                  to_phone_number, from_phone_number, message_content)
-        VALUES (#{message_type}, #{message_status}, #{received_time}, #{sender_agent_id}, #{to_phone_number},
+        VALUES (#{protocol}, #{message_type}, #{message_status}, #{received_time}, #{sender_agent_id},
+                #{to_phone_number},
                 #{from_phone_number},
                 #{message_content})
     </insert>
 
     <insert id="saveAll" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="received_id">
-        INSERT INTO received_message_from_agent(message_type, message_status,received_time, sender_agent_id,
+        INSERT INTO received_message_from_agent(protocol,message_type, message_status,received_time, sender_agent_id,
         to_phone_number,from_phone_number, message_content)
         VALUES
         <foreach collection="list" item="item" separator=",">
             (
+            #{item.protocol},
             #{item.message_type},#{item.message_status}, #{item.received_time}, #{item.sender_agent_id},
             #{item.to_phone_number},
             #{item.from_phone_number},#{item.message_content}
             )
         </foreach>
     </insert>
+
+    <select id="ping" resultType="java.lang.Boolean">
+        SELECT 1;
+    </select>
 
 
 </mapper>

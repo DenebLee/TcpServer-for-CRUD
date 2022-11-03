@@ -121,7 +121,7 @@ sourceSets {
 ```bash
 
 ├─config
-│      db.properties
+│      config.properties
 │      test.properties
 │
 ├─gradle

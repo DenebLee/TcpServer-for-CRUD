@@ -64,6 +64,7 @@ sourceSets {
     main {
         resources {
             srcDir "./mapper/"
+            srcDir "./config/"
         }
     }
     test {

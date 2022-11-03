@@ -34,7 +34,7 @@ class SendMessageRepositoryImpTest extends TestRepositorySetUp {
     @BeforeEach
     void setUp() throws DeleteException, InsertException {
         sendToTelecomMessageRepository.deleteAll();
-        receiveMessage = new ReceiveMessage(MessageType.SMS, MessageStatus.SELECTED, 0, new Timestamp(System.currentTimeMillis()), 3, "010-4040-4141", "010-4444-5555", "테스트");
+        receiveMessage = new ReceiveMessage(MessageType.SMS, "SEND", MessageStatus.SELECTED, 0, new Timestamp(System.currentTimeMillis()), 3, "010-4040-4141", "010-4444-5555", "테스트");
         receivedMessageRepository.save(receiveMessage);
         id = receiveMessage.getReceived_id();
     }
@@ -43,7 +43,7 @@ class SendMessageRepositoryImpTest extends TestRepositorySetUp {
     @DisplayName("SEND -> SAVE")
     void should_send_save() throws SelectException, InsertException {
         // given
-        SendMessage sendMessage = new SendMessage(MessageType.SMS, MessageStatus.SELECTED, 0, id, "Send Test Value");
+        SendMessage sendMessage = new SendMessage(MessageType.SMS, "SEND_ACK", MessageStatus.SELECTED, 0, id, "Send Test Value");
 
         // when
         int actual = sendToTelecomMessageRepository.save(sendMessage);
@@ -57,7 +57,7 @@ class SendMessageRepositoryImpTest extends TestRepositorySetUp {
     void should_send_count() throws InsertException, SelectException {
         // given
         receivedMessageRepository.save(receiveMessage);
-        SendMessage expected = new SendMessage(MessageType.SMS, MessageStatus.SELECTED, 0, id, "Data for Count");
+        SendMessage expected = new SendMessage(MessageType.SMS, "SEND_ACK", MessageStatus.SELECTED, 0, id, "Data for Count");
         sendToTelecomMessageRepository.save(expected);
 
         // when
@@ -71,7 +71,7 @@ class SendMessageRepositoryImpTest extends TestRepositorySetUp {
     @DisplayName("SEND -> FIND BY ID")
     void should_return_when_given_id() throws SelectException {
         // given
-        SendMessage expected = new SendMessage(MessageType.SMS, 1, 0, id, "Data for findById");
+        SendMessage expected = new SendMessage(MessageType.SMS, "SEND_ACK", 1, 0, id, "Data for findById");
         sendToTelecomMessageRepository.save(expected);
         long id = expected.getSend_id();
 
@@ -79,6 +79,7 @@ class SendMessageRepositoryImpTest extends TestRepositorySetUp {
         SendMessage actual = sendToTelecomMessageRepository.findById(id);
 
         // then
+        assertThat(actual.getProtocol()).isEqualTo(expected.getProtocol());
         assertThat(actual.getStatus()).isEqualTo(expected.getStatus());
         assertThat(actual.getReceived_id()).isEqualTo(expected.getReceived_id());
         assertThat(actual.getResult()).isEqualTo(expected.getResult());
@@ -88,7 +89,7 @@ class SendMessageRepositoryImpTest extends TestRepositorySetUp {
     @DisplayName("SEND -> DELETE BY ID")
     void should_send_delete_by_id() throws SelectException {
         // given
-        SendMessage expected = new SendMessage(MessageType.SMS, MessageStatus.SELECTED, 0, id, "Data for Delete");
+        SendMessage expected = new SendMessage(MessageType.SMS, "SEND_ACK", MessageStatus.SELECTED, 0, id, "Data for Delete");
         sendToTelecomMessageRepository.save(expected);
         long send_id = expected.getSend_id();
 
@@ -106,7 +107,7 @@ class SendMessageRepositoryImpTest extends TestRepositorySetUp {
         List<SendMessage> expected = new ArrayList<>();
         int count = 100;
         for (int i = 0; i < count; i++) {
-            expected.add(new SendMessage(MessageType.SMS, MessageStatus.SELECTED, 0, id, "테스트용" + i));
+            expected.add(new SendMessage(MessageType.SMS, "SEND_ACK", MessageStatus.SELECTED, 0, id, "테스트용" + i));
         }
         // when
         int actual = sendToTelecomMessageRepository.saveAll(expected);
@@ -122,7 +123,7 @@ class SendMessageRepositoryImpTest extends TestRepositorySetUp {
         // given
         List<SendMessage> expected = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
-            expected.add(new SendMessage(MessageType.SMS, MessageStatus.SELECTED, 0, id, "테스트용" + i));
+            expected.add(new SendMessage(MessageType.SMS, "SEND_ACK", MessageStatus.SELECTED, 0, id, "테스트용" + i));
         }
         sendToTelecomMessageRepository.saveAll(expected);
 
@@ -137,10 +138,10 @@ class SendMessageRepositoryImpTest extends TestRepositorySetUp {
     @DisplayName("SEND -> UPDATE")
     void should_send_update() throws SelectException, UpdateException {
         // given
-        SendMessage originalData = new SendMessage(MessageType.SMS, MessageStatus.WAIT, 0, id, "안녕하세요");
+        SendMessage originalData = new SendMessage(MessageType.SMS, "SEND_ACK", MessageStatus.WAIT, 0, id, "안녕하세요");
         sendToTelecomMessageRepository.save(originalData);
         long send_id = originalData.getSend_id();
-        SendMessage expected = new SendMessage(MessageType.SMS, MessageStatus.SELECTED, send_id, id, "수정된 값");
+        SendMessage expected = new SendMessage(MessageType.SMS, "SEND_ACK", MessageStatus.SELECTED, send_id, id, "수정된 값");
 
         // when
         int actual = sendToTelecomMessageRepository.update(expected);

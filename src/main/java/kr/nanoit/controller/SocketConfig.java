@@ -31,6 +31,10 @@ public class SocketConfig {
 
     public void setSocket(Socket socket) throws IOException {
         this.socket = socket;
+        this.socket.setTcpNoDelay(true);
+        this.socket.setKeepAlive(true);
+        this.socket.setSoTimeout(60000);
+
         dataOutputStream = new DataOutputStream(socket.getOutputStream());
         dataInputStream = new DataInputStream(socket.getInputStream());
 

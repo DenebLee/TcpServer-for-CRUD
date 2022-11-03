@@ -8,6 +8,7 @@ import kr.nanoit.exception.message.UpdateException;
 import kr.nanoit.exception.message.InsertException;
 import kr.nanoit.model.message.ReceiveMessage;
 import kr.nanoit.repository.ReceivedMessageRepository;
+import lombok.ToString;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,13 +39,14 @@ class ReceivedMessageRepositoryImplTest extends TestRepositorySetUp {
     @DisplayName("RECEIVE -> FIND BY ID")
     void should_receive_select_by_id() throws InsertException, SelectException {
         // given
-        ReceiveMessage expected = new ReceiveMessage(MessageType.SMS, MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), 4, "010-4040-4141", "010-4444-5555", "테스트");
+        ReceiveMessage expected = new ReceiveMessage(MessageType.SMS, "SEND", MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), 4, "010-4040-4141", "010-4444-5555", "테스트");
         receivedMessageRepository.save(expected);
 
         // when
         ReceiveMessage actual = receivedMessageRepository.findById(expected.getReceived_id());
 
         // then
+        assertThat(actual.getProtocol()).isEqualTo(expected.getProtocol());
         assertThat(actual.getMessage_type()).isEqualTo(expected.getMessage_type());
         assertThat(actual.getReceived_time()).isEqualTo(expected.getReceived_time());
         assertThat(actual.getSender_agent_id()).isEqualTo(expected.getSender_agent_id());
@@ -60,7 +62,7 @@ class ReceivedMessageRepositoryImplTest extends TestRepositorySetUp {
         int count = 100;
         List<ReceiveMessage> expectedData = new ArrayList<>();
         for (int i = 0; i < count; i++) {
-            expectedData.add(new ReceiveMessage(MessageType.SMS, MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), i, "010-4040-414" + i, "010-4444-555" + i, "테스트"));
+            expectedData.add(new ReceiveMessage(MessageType.SMS, "SEND", MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), i, "010-4040-414" + i, "010-4444-555" + i, "테스트"));
         }
         receivedMessageRepository.saveAll(expectedData);
         System.out.println(expectedData);
@@ -77,7 +79,7 @@ class ReceivedMessageRepositoryImplTest extends TestRepositorySetUp {
     @DisplayName("RECEIVE -> COUNT")
     void should_receive_return_number_of_count() throws SelectException, InsertException {
         // given
-        ReceiveMessage expected = new ReceiveMessage(MessageType.SMS, MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), 4, "010-4040-4141", "010-4444-5555", "테스트");
+        ReceiveMessage expected = new ReceiveMessage(MessageType.SMS, "SEND", MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), 4, "010-4040-4141", "010-4444-5555", "테스트");
         receivedMessageRepository.save(expected);
 
         // when
@@ -92,7 +94,7 @@ class ReceivedMessageRepositoryImplTest extends TestRepositorySetUp {
     @DisplayName("RECEIVE -> DELETE BY ID")
     void should_receive_delete_by_id() throws InsertException, DeleteException {
         // given
-        ReceiveMessage expected = new ReceiveMessage(MessageType.SMS, MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), 4, "010-4040-4141", "010-4444-5555", "테스트");
+        ReceiveMessage expected = new ReceiveMessage(MessageType.SMS, "SEND", MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), 4, "010-4040-4141", "010-4444-5555", "테스트");
         receivedMessageRepository.save(expected);
 
         // when
@@ -110,7 +112,7 @@ class ReceivedMessageRepositoryImplTest extends TestRepositorySetUp {
         // given -> 100 칼럼 생성
         List<ReceiveMessage> expected = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
-            expected.add(new ReceiveMessage(MessageType.SMS, MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), i, "010-4040-4141" + i, "010-4444-5555" + i, "테스트" + i));
+            expected.add(new ReceiveMessage(MessageType.SMS, "SEND", MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), i, "010-4040-4141" + i, "010-4444-5555" + i, "테스트" + i));
         }
         receivedMessageRepository.saveAll(expected);
         // when
@@ -130,7 +132,7 @@ class ReceivedMessageRepositoryImplTest extends TestRepositorySetUp {
     @DisplayName("RECEIVE -> EXISTS BY ID")
     void should_exists_by_id() throws InsertException, SelectException {
         // given
-        ReceiveMessage expected = new ReceiveMessage(MessageType.SMS, MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), 4, "010-4040-4141", "010-4444-5555", "테스트");
+        ReceiveMessage expected = new ReceiveMessage(MessageType.SMS, "SEND", MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), 4, "010-4040-4141", "010-4444-5555", "테스트");
         receivedMessageRepository.save(expected);
         long id = expected.getReceived_id();
 
@@ -145,12 +147,12 @@ class ReceivedMessageRepositoryImplTest extends TestRepositorySetUp {
     @DisplayName("RECEIVE -> UPDATE")
     void should_receive_update() throws InsertException, UpdateException, SelectException {
         // given
-        ReceiveMessage originalData = new ReceiveMessage(MessageType.SMS, MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), 4, "010-4040-4141", "010-4444-5555", "테스트");
+        ReceiveMessage originalData = new ReceiveMessage(MessageType.SMS, "SEND", MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), 4, "010-4040-4141", "010-4444-5555", "테스트");
         receivedMessageRepository.save(originalData);
         // 테이블에 칼럼 1개 생성
         long id = originalData.getReceived_id();
         // 생성된 칼럼의 pk key get
-        ReceiveMessage expected = new ReceiveMessage(MessageType.SMS, MessageStatus.WAIT, id, new Timestamp(System.currentTimeMillis()), 2, "010101010", "010-4444-5555", "안녕하세요 저는 이정섭입니다");
+        ReceiveMessage expected = new ReceiveMessage(MessageType.SMS, "SEND", MessageStatus.WAIT, id, new Timestamp(System.currentTimeMillis()), 2, "010101010", "010-4444-5555", "안녕하세요 저는 이정섭입니다");
         // 수정 하고자 하는 데이터 세팅
 
         // when
@@ -166,7 +168,7 @@ class ReceivedMessageRepositoryImplTest extends TestRepositorySetUp {
     @DisplayName("RECEIVE -> FIND BY ID")
     void should_receive_return_result_when_select_message_id() throws InsertException, SelectException {
         // given
-        ReceiveMessage expected = new ReceiveMessage(MessageType.SMS, MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), 4, "010-4040-4141", "010-4444-5555", "테스트");
+        ReceiveMessage expected = new ReceiveMessage(MessageType.SMS, "SEND", MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), 4, "010-4040-4141", "010-4444-5555", "테스트");
         receivedMessageRepository.save(expected);
         long id = expected.getReceived_id();
 
@@ -174,6 +176,7 @@ class ReceivedMessageRepositoryImplTest extends TestRepositorySetUp {
         ReceiveMessage actual = receivedMessageRepository.findById(id);
 
         // then
+        assertThat(actual.getProtocol()).isEqualTo(expected.getProtocol());
         assertThat(actual.getMessage_type()).isEqualTo(expected.getMessage_type());
         assertThat(actual.getReceived_time()).isEqualTo(expected.getReceived_time());
         assertThat(actual.getTo_phone_number()).isEqualTo(expected.getTo_phone_number());
@@ -183,11 +186,11 @@ class ReceivedMessageRepositoryImplTest extends TestRepositorySetUp {
     }
 
     @Test
-    @DisplayName("RECEIVE -> INSERT")
+    @DisplayName("RECEIVE -> SAVE")
     void should_receive_insert() throws InsertException {
 
         // given
-        ReceiveMessage expected = new ReceiveMessage(MessageType.SMS, MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), 4, "010-4040-4141", "010-4444-5555", "테스트");
+        ReceiveMessage expected = new ReceiveMessage(MessageType.SMS, "SEND", MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), 4, "010-4040-4141", "010-4444-5555", "테스트");
 
         // when
         int acutal = receivedMessageRepository.save(expected);
@@ -202,7 +205,7 @@ class ReceivedMessageRepositoryImplTest extends TestRepositorySetUp {
         // given
         List<ReceiveMessage> expected = new ArrayList<>();
         for (int i = 0; i < 50; i++) {
-            expected.add(new ReceiveMessage(MessageType.SMS, MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), i, "010-4040-4141" + i, "010-4444-5555" + i, "테스트" + i));
+            expected.add(new ReceiveMessage(MessageType.SMS, "SEND", MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), i, "010-4040-4141" + i, "010-4444-5555" + i, "테스트" + i));
         }
         System.out.println(expected);
         // when
@@ -212,6 +215,13 @@ class ReceivedMessageRepositoryImplTest extends TestRepositorySetUp {
         assertThat(actual).isEqualTo(expected.size());
     }
 
+    @Test
+    @DisplayName("RECEIVE -> PING")
+    void should_return_true_when_send_ping() {
+        boolean actual = receivedMessageRepository.alive();
+
+        assertThat(actual).isTrue();
+    }
 }
 
 

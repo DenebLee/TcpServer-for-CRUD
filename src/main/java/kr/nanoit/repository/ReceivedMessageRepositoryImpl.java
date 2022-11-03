@@ -158,4 +158,14 @@ public class ReceivedMessageRepositoryImpl implements ReceivedMessageRepository 
             throw new InsertException(e.getReason());
         }
     }
+
+    @Override
+    public boolean alive() {
+        try (SqlSession session = sessionManager.getSqlSession(true)) {
+            if (session.selectOne("ping")) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

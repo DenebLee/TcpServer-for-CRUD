@@ -1,6 +1,6 @@
 package kr.nanoit.message.service;
 
-import kr.nanoit.core.db.DataBaseQueueList;
+
 import kr.nanoit.model.message.MessageStatus;
 import kr.nanoit.model.message.MessageType;
 import kr.nanoit.model.message.ReceiveMessage;
@@ -26,7 +26,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Testcontainers
 class ReceivedMessageServiceImplTest extends TestServiceSetUp {
     private final ReceivedMessageService receivedMessageService;
-    private DataBaseQueueList dataBaseQueueList;
 
     public ReceivedMessageServiceImplTest() throws IOException {
         super("RECEIVE");
@@ -34,11 +33,8 @@ class ReceivedMessageServiceImplTest extends TestServiceSetUp {
     }
 
     @BeforeEach
-    void setUp() throws IOException, DeleteException {
-        receivedMessageRepository = ReceivedMessageRepository.createReceiveRepository(properties);
+    void setUp() throws DeleteException {
         receivedMessageRepository.deleteAll();
-        dataBaseQueueList = new DataBaseQueueList();
-
     }
 
     @Test
@@ -48,7 +44,7 @@ class ReceivedMessageServiceImplTest extends TestServiceSetUp {
         // 테스트 칼럼 10개 세팅
         List<ReceiveMessage> dataSetList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            ReceiveMessage dataSet = new ReceiveMessage(MessageType.SMS, MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), 1 + i, "010-4444-1111", "010-4444-5353", "테스트용" + i);
+            ReceiveMessage dataSet = new ReceiveMessage(MessageType.SMS, "SEND", MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), 1 + i, "010-4444-1111", "010-4444-5353", "테스트용" + i);
             dataSetList.add(dataSet);
         }
         receivedMessageRepository.saveAll(dataSetList);
@@ -66,10 +62,10 @@ class ReceivedMessageServiceImplTest extends TestServiceSetUp {
         int count2 = 414;
 
         for (int i = 0; i < count; i++) {
-            test.add(new ReceiveMessage(MessageType.SMS, MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), 1 + i, "010-4444-1111", "010-4444-5353", "안녕하세요" + i));
+            test.add(new ReceiveMessage(MessageType.SMS, "SEND", MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), 1 + i, "010-4444-1111", "010-4444-5353", "안녕하세요" + i));
         }
         for (int i = 0; i < count2; i++) {
-            test.add(new ReceiveMessage(MessageType.SMS, MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), 1 + i, "010-4444-1111", "010-4444-5353", "안뇽하세요" + i));
+            test.add(new ReceiveMessage(MessageType.SMS, "SEND", MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), 1 + i, "010-4444-1111", "010-4444-5353", "안뇽하세요" + i));
         }
 
         int total_count = receivedMessageRepository.saveAll(test);
@@ -84,12 +80,10 @@ class ReceivedMessageServiceImplTest extends TestServiceSetUp {
     @DisplayName("RECEIVED SERVICE -> INSERT MESSAGE TO DB")
     void should_insert_when_received_quere_have_a_data() throws InsertException, SelectException {
         // given
-        ReceiveMessage expected = new ReceiveMessage(MessageType.SMS, null, 0, null, 1, "010-4444-1111", "010-4444-5353", "보냅니다 메시지 받으세영");
-        dataBaseQueueList.getReceiveMessageLinkedBlockingQueue().offer(expected);
+        ReceiveMessage expected = new ReceiveMessage(MessageType.SMS, "SEND", null, 0, null, 1, "010-4444-1111", "010-4444-5353", "보냅니다 메시지 받으세영");
 
-        // 큐 데이터 세팅
         // when
-        receivedMessageService.insertMessage(dataBaseQueueList);
+        receivedMessageService.insertMessage(expected);
 
         // then
         ReceiveMessage result = receivedMessageRepository.findById(849);

@@ -1,7 +1,5 @@
 package kr.nanoit.core.db;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.io.Resources;
