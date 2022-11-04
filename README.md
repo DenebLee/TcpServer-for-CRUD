@@ -15,9 +15,9 @@
 
 
 ## TODO
-1. service impl 구현
-2. 비즈니스 로직 구현에 대한 생각 더하기
-
+1. DB Handler 구현 (server시작 후 pool 생성 필요)
+2. 지속적인 Client packet 요청 중 서버 socket이 끊김 현상 수정 요구 
+3. 소스 정리
 
 ## Complete
 - TestCode에 TestContainer 생성 후 테스트 
@@ -30,14 +30,15 @@
 
 
 ## COMMIT
-| DATE         | content                                                                                                                                                |
-|--------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
+| DATE         | content                                                                                                                                               |
+|--------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
 | [2022-10-05] | Httpserver 생성, password 디코딩 비즈니스 로직 추가, 각 목적별 Dto 생성, Exception으로 오류 처리 , Http 요청에 따른 Request 구현, Object Mapper 로직 추가, Httpserver 테스트 코드 작성, handler작성 중 |
-| [2022-10-06] | ReceiveServer 구현, Model 구현 ( Message,LoginMessage ), HttpServerHandler에 대한 테스트 코드 작성 완료 , PacketType enum 작성, 잘못된 요청에 대한 BadSendPacket 구현중             |                                                                                                     |
-| [2022-10-17] | Mybatis Mapping 될 MessageDAO 및 implement구현 , DAO 테스트 코드 구현 , 각 목적에 따른 Exception 구현, 프로젝트 방향서 재성립                                                       |                                                                                                     |
-| [2022-10-19] | 인터페이스 CrudRepository에서 명시한 메소드들 구현, Repository 구현체에 대한 테스트 코드 작성, Repository와 비즈니스 로직에 대한 명확한 구분을 짓기위한 프로젝트 구조 개선, resource에 설정파일 두지 않고 리소스 루트 폴더에 지정  |                                                                                                     |
-| [2022-10-21] | 관계형 데이터 베이스 구축 , Repository 구현체 각각 테스트 코드 작성 완료                                                                                                        |                                                                                                     |
-| [2022-10-26] | Service 구현체 구현중, 모든 테스크 코드 성공 여부 체크 완료                                                                                                                 |                                                                                                     |
+| [2022-10-06] | ReceiveServer 구현, Model 구현 ( Message,LoginMessage ), HttpServerHandler에 대한 테스트 코드 작성 완료 , PacketType enum 작성, 잘못된 요청에 대한 BadSendPacket 구현중            |                                                                                                     |
+| [2022-10-17] | Mybatis Mapping 될 MessageDAO 및 implement구현 , DAO 테스트 코드 구현 , 각 목적에 따른 Exception 구현, 프로젝트 방향서 재성립                                                      |                                                                                                     |
+| [2022-10-19] | 인터페이스 CrudRepository에서 명시한 메소드들 구현, Repository 구현체에 대한 테스트 코드 작성, Repository와 비즈니스 로직에 대한 명확한 구분을 짓기위한 프로젝트 구조 개선, resource에 설정파일 두지 않고 리소스 루트 폴더에 지정 |                                                                                                     |
+| [2022-10-21] | 관계형 데이터 베이스 구축 , Repository 구현체 각각 테스트 코드 작성 완료                                                                                                       |                                                                                                     |
+| [2022-10-26] | Service 구현체 구현중, 모든 테스크 코드 성공 여부 체크 완료                                                                                                                |                                                                                                     |
+| [2022-11-04] | Gateway에 대응하는 Client 구현 중 , DB값 안에 값 들어가는 테스트 완료 , 전체 테스트 완료                                                                                          |                                                                                                     |
 
 ## Used Library
 ```c
