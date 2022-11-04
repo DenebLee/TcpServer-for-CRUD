@@ -73,7 +73,7 @@ class SendMessageServiceImplTest extends TestServiceSetUp {
     void should_insert_message_when_queue_contains_data() throws SelectException {
         // given
         ReceiveMessage receiveMessage = new ReceiveMessage(MessageType.SMS, "SEND", MessageStatus.SELECTED, 1, new Timestamp(System.currentTimeMillis()), 123, "01044445555", "01044446666", "테스트용");
-        SendMessage expected = new SendMessage(MessageType.SMS, receiveMessage.getProtocol(), receiveMessage.getMessage_status(), 0, receiveMessage.getReceived_id(), null);
+        SendMessage expected = new SendMessage(MessageType.SMS, receiveMessage.getPacket_type(), receiveMessage.getMessage_status(), 0, receiveMessage.getReceived_id(), null);
 
         // when
         sendToTelecomMessageService.insertMessage(expected);

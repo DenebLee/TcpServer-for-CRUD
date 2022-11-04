@@ -1,5 +1,6 @@
 package kr.nanoit.model.message;
 
+import kr.nanoit.model.message_Structure.PacketType;
 import lombok.*;
 
 @Getter
@@ -10,7 +11,7 @@ import lombok.*;
 
 public class SendMessage implements Message {
     private MessageType message_type;
-    private String protocol;
+    private PacketType packetType;
     private Integer message_status;
 
     private long send_id;

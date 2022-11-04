@@ -19,11 +19,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 class ReceiveServerTest {
-    private MessageDto messageDto;
     private Properties properties;
 
     public ReceiveServerTest() {
-        messageDto = new MessageDto();
         properties = new Properties();
     }
 

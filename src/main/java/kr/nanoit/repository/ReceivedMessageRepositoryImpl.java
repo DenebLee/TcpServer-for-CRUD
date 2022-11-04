@@ -139,8 +139,9 @@ public class ReceivedMessageRepositoryImpl implements ReceivedMessageRepository 
             int result = session.insert("save", receiveMessage);
             if (result > 0) {
                 return result;
+            } else {
+                throw new InsertException("The column you want to select does not exist in the table");
             }
-            throw new InsertException("The column you want to select does not exist in the table");
         }
     }
 

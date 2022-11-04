@@ -38,11 +38,11 @@ public class GateWayMain {
             Thread receive = new Thread(new ReceiveServer(socketUtil, properties));
             receive.setName("Receive-Server");
 
-            Thread send = new Thread(new SendServer(socketUtil, properties));
-            send.setName("Send-Server");
+//            Thread send = new Thread(new SendServer(socketUtil, properties));
+//            send.setName("Send-Server");
 
             receive.start();
-            send.start();
+//            send.start();
 
         } catch (Exception e) {
             e.printStackTrace();

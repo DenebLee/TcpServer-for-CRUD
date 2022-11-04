@@ -12,11 +12,12 @@ public class DecoderMessage {
 
     public MessageType messageType(byte[] receiveByte) {
         String test = new String(receiveByte, (IndexSend.INDEX_MESSAGE_TYPE), LengthSend.LENGTH_SEND_MESSAGE_TYPE);
-        return MessageType.valueOf(test);
+        System.out.println(test);
+        return MessageType.fromPropertyName(test);
     }
 
-    public String sender_agent_id(byte[] receiveByte) {
-        return (new String(receiveByte, (IndexSend.INDEX_SENDER_AGENT_ID), LengthSend.LENGTH_SENDER_AGENT_ID));
+    public Integer sender_agent_id(byte[] receiveByte) {
+        return Integer.parseInt(new String(receiveByte, (IndexSend.INDEX_SENDER_AGENT_ID), LengthSend.LENGTH_SENDER_AGENT_ID).trim());
     }
 
     public String to_phone_number(byte[] receiveByte) {

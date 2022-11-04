@@ -1,5 +1,6 @@
 package kr.nanoit.model.message;
 
+import kr.nanoit.model.message_Structure.PacketType;
 import lombok.*;
 
 import java.sql.Timestamp;
@@ -13,9 +14,7 @@ import java.sql.Timestamp;
 
 public class ReceiveMessage implements Message {
 
-
     private MessageType message_type; // SMS, LMS 등등 현재 SMS만 설정 client에게 받을 값
-    private String protocol; // SEND, SEND_ACK , REPORT, REPORT_ACK, LOGIN, LOGIN_ACK
     private Integer message_status; // wait, selected,send DB체크용
 
     private long received_id; // auto increment로 불필요 -> not null이라 default 0로 사용

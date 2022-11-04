@@ -8,4 +8,5 @@ public interface Message extends Serializable {
     String getMessageType();
 
     Integer getStatus();
+
 }

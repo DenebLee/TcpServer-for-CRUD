@@ -8,7 +8,6 @@ import kr.nanoit.exception.message.UpdateException;
 import kr.nanoit.exception.message.InsertException;
 import kr.nanoit.model.message.ReceiveMessage;
 import kr.nanoit.repository.ReceivedMessageRepository;
-import lombok.ToString;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -46,7 +45,7 @@ class ReceivedMessageRepositoryImplTest extends TestRepositorySetUp {
         ReceiveMessage actual = receivedMessageRepository.findById(expected.getReceived_id());
 
         // then
-        assertThat(actual.getProtocol()).isEqualTo(expected.getProtocol());
+        assertThat(actual.getPacket_type()).isEqualTo(expected.getPacket_type());
         assertThat(actual.getMessage_type()).isEqualTo(expected.getMessage_type());
         assertThat(actual.getReceived_time()).isEqualTo(expected.getReceived_time());
         assertThat(actual.getSender_agent_id()).isEqualTo(expected.getSender_agent_id());
@@ -176,7 +175,7 @@ class ReceivedMessageRepositoryImplTest extends TestRepositorySetUp {
         ReceiveMessage actual = receivedMessageRepository.findById(id);
 
         // then
-        assertThat(actual.getProtocol()).isEqualTo(expected.getProtocol());
+        assertThat(actual.getPacket_type()).isEqualTo(expected.getPacket_type());
         assertThat(actual.getMessage_type()).isEqualTo(expected.getMessage_type());
         assertThat(actual.getReceived_time()).isEqualTo(expected.getReceived_time());
         assertThat(actual.getTo_phone_number()).isEqualTo(expected.getTo_phone_number());

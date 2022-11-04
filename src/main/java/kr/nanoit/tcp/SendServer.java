@@ -5,6 +5,7 @@ import kr.nanoit.model.message.LoginMessage;
 import kr.nanoit.model.message.Message;
 import kr.nanoit.model.message.ReceiveMessage;
 import kr.nanoit.model.message.SendMessage;
+import kr.nanoit.model.message_Structure.PacketType;
 import kr.nanoit.repository.ReceivedMessageRepository;
 import kr.nanoit.repository.SendToTelecomMessageRepository;
 import kr.nanoit.service.ReceivedMessageService;
@@ -46,7 +47,7 @@ public class SendServer implements Runnable {
 
                     } else if (message instanceof ReceiveMessage) {
                         ReceiveMessage receiveMessage = (ReceiveMessage) message;
-                        if (receiveMessage.getProtocol().contains("SEND") && receiveMessage.getReceived_id() != 0) {
+                        if (receiveMessage.getReceived_id() != 0) {
                             if (receivedMessageService.referenceReceiveDB(receiveMessage)) {
                                 log.info("RECEIVE DB MESSAGE REFERENCE SUCCESS");
                             }

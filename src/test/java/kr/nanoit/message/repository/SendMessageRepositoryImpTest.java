@@ -79,7 +79,7 @@ class SendMessageRepositoryImpTest extends TestRepositorySetUp {
         SendMessage actual = sendToTelecomMessageRepository.findById(id);
 
         // then
-        assertThat(actual.getProtocol()).isEqualTo(expected.getProtocol());
+        assertThat(actual.getPacketType()).isEqualTo(expected.getPacketType());
         assertThat(actual.getStatus()).isEqualTo(expected.getStatus());
         assertThat(actual.getReceived_id()).isEqualTo(expected.getReceived_id());
         assertThat(actual.getResult()).isEqualTo(expected.getResult());

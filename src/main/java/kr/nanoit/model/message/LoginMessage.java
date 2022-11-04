@@ -1,5 +1,6 @@
 package kr.nanoit.model.message;
 
+import kr.nanoit.model.message_Structure.PacketType;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -10,7 +11,7 @@ import lombok.ToString;
 public class LoginMessage implements Message {
     private MessageType messageType;
 
-    private String protocol;
+    private PacketType packetType;
     private String id;
     private String password;
 
