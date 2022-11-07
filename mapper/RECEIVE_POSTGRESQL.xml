@@ -17,14 +17,7 @@
             FROM_PHONE_NUMBER VARCHAR(32)           NOT NULL,
             MESSAGE_CONTENT   TEXT                  NOT NULL
         );
-        CREATE TABLE IF NOT EXISTS send_message_from_gateway_to_telecom
-        (
-            SEND_ID        BIGSERIAL PRIMARY KEY NOT NULL,
-            MESSAGE_TYPE   VARCHAR(8)            NOT NULL,
-            RECEIVED_ID    BIGINT                NOT NULL,
-            MESSAGE_STATUS INT                   NOT NULL,
-            RESULT         VARCHAR(24)           NULL
-        );
+
     </update>
 
     <select id="count" resultType="java.lang.Integer">

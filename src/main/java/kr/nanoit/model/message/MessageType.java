@@ -15,8 +15,9 @@ public enum MessageType {
     }
 
     public static MessageType fromPropertyName(String x) {
+        System.out.println(x);
         for (MessageType currentType : MessageType.values()) {
-            if (x.equals(currentType.getProperty())) {
+            if (x.contains(currentType.getProperty())) {
                 return currentType;
             }
         }

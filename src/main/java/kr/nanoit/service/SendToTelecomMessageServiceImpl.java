@@ -42,13 +42,15 @@ public class SendToTelecomMessageServiceImpl implements SendToTelecomMessageServ
 
     @Override
     // Queue에 전달된
-    public void insertMessage(SendMessage sendMessage) {
+    public Integer insertMessage(SendMessage sendMessage) {
         try {
             if (sendMessage != null) {
-                if (send.save(sendMessage) > 0) {
+                int count = send.save(sendMessage);
+                if (count > 0) {
                     sendMessage.setResult("Success");
                     send.update(sendMessage);
                     log.info("INSERT DB COMPLETE, MESSAGE_TYPE : {}, MESSAGE_STATUS : {}, SEND_ID : {}, RECEIVE_ID : {}, RECEIVED_ID, RESULT : {}", sendMessage.getMessage_type(), sendMessage.getMessage_status(), sendMessage.getSend_id(), sendMessage.getReceived_id(), sendMessage.getResult());
+                    return count;
                 } else {
                     log.warn("INSERT DB FAILED");
                 }
@@ -56,6 +58,7 @@ public class SendToTelecomMessageServiceImpl implements SendToTelecomMessageServ
         } catch (SelectException | UpdateException e) {
             throw new RuntimeException(e);
         }
+        return 0;
     }
 
     @Override

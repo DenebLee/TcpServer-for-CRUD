@@ -13,6 +13,7 @@ import org.apache.ibatis.type.JdbcType;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Properties;
 
 
@@ -51,7 +52,6 @@ public class DataBaseSessionManager {
         } else {
             mapperResources = new String[]{properties.getProperty("mapper")};
         }
-
         for (String mapper : mapperResources) {
             InputStream inputStream = Resources.getResourceAsStream(mapper);
             XMLMapperBuilder mapperBuilder = new XMLMapperBuilder(inputStream, configuration, mapper, configuration.getSqlFragments());

@@ -1,6 +1,10 @@
 package kr.nanoit.tcp;
 
+import kr.nanoit.core.db.DataBaseSessionManager;
 import kr.nanoit.model.message_Structure.PacketType;
+import kr.nanoit.repository.ReceivedMessageRepository;
+import kr.nanoit.service.ReceivedMessageService;
+import kr.nanoit.service.ReceivedMessageServiceImpl;
 import kr.nanoit.util.Crypt;
 import kr.nanoit.controller.SocketUtil;
 import kr.nanoit.exception.message.InsertException;
@@ -10,31 +14,25 @@ import kr.nanoit.model.decoder.DecoderMessage;
 import kr.nanoit.model.message.LoginMessage;
 import kr.nanoit.model.message.MessageType;
 import kr.nanoit.model.message.ReceiveMessage;
-import kr.nanoit.repository.ReceivedMessageRepository;
-import kr.nanoit.service.ReceivedMessageService;
-import kr.nanoit.service.ReceivedMessageServiceImpl;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
 
 
 @Slf4j
 public class ReceiveServer implements Runnable {
 
-    @Getter
-    public static boolean status;
+
     private SocketUtil socketUtil;
     private final DecoderLogin decoderLogin;
-    private ReceivedMessageRepository receivedMessageRepository;
     private ReceivedMessageService receivedMessageService;
     private DecoderMessage decoderMessage;
 
 
-    public ReceiveServer(SocketUtil socketUtil, Properties prop) throws IOException {
-        receivedMessageRepository = ReceivedMessageRepository.createReceiveRepository(prop);
-        receivedMessageService = new ReceivedMessageServiceImpl(receivedMessageRepository);
+    public ReceiveServer(SocketUtil socketUtil, ReceivedMessageService receivedMessageService) {
+        this.receivedMessageService = receivedMessageService;
         this.socketUtil = socketUtil;
         decoderLogin = new DecoderLogin();
         decoderMessage = new DecoderMessage();
@@ -43,7 +41,7 @@ public class ReceiveServer implements Runnable {
     @Override
     public void run() {
         if (socketUtil.getSocket().isConnected()) {
-            log.info("RECEIVE SERVER Client Connected !!!!! {}", socketUtil.getSocket().getInetAddress());
+            log.info("RECEIVE SERVER Client Connected !!!!! {}", socketUtil.getSocket().getInetAddress().getAddress());
         }
         try {
             while (true) {
@@ -61,6 +59,7 @@ public class ReceiveServer implements Runnable {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            socketUtil.socketClose();
         }
     }
 
@@ -90,29 +89,20 @@ public class ReceiveServer implements Runnable {
 
                 log.info("RECEVIED PACKED Message_Type : {} , Message_Status : {} , Received_Id : {} ," +
                                 "  From_Phone_Number : {} , To_Phone_Number : {} , Sender_Id : {} , Message_content : {} ",
-                         receiveMessage.getMessage_type(), receiveMessage.getMessage_status(), receiveMessage.getReceived_id(), receiveMessage.getFrom_phone_number(), receiveMessage.getTo_phone_number(), receiveMessage.getSender_agent_id(), receiveMessage.getMessage_content());
-                // receiveMessage 세팅 완료되면 DB에 insert
+                        receiveMessage.getMessage_type(), receiveMessage.getMessage_status(), receiveMessage.getReceived_id(), receiveMessage.getFrom_phone_number(), receiveMessage.getTo_phone_number(), receiveMessage.getSender_agent_id(), receiveMessage.getMessage_content());
 
-                // 1. DB 살아있는지 체크 (핑)
-                if (receivedMessageService.isAlive()) {
+                if (receivedMessageService.isAlive() == true) {
                     log.info("SERVER IS ALIVE");
-                } else {
+                } else if (receivedMessageService.isAlive() == false) {
                     socketUtil.socketClose();
                 }
-                // 2. 살아있으면 insert
-                receivedMessageService.insertMessage(receiveMessage);
-
-                // insert한 후 id값이 return 되기 때문에 id 변수 하나 생성
-                long id = receiveMessage.getReceived_id();
-
-                // insert 잘되었는지 체크
-                if (receivedMessageRepository.findById(id) != null) {
-                    log.info("RECEIVE MESSAGE INSERT TO DB SUCCESS");
+                int result = receivedMessageService.insertMessage(receiveMessage);
+                if (result > 0) {
+                    List<ReceiveMessage> listData = receivedMessageService.selectAllMessage();
+                    for (ReceiveMessage receiveMessage1 : listData) {
+                        socketUtil.getReceiveMessageLinkedBlockingQueue().offer(receiveMessage1);
+                    }
                 }
-                // 3. insert 성공 후 SendQueue에 넣고 전달
-                // not null이며 자동 증가값을 가진 id값 때문에 0으로 전달했기에 receivedMessage에 따로 뽑은 아이디 값을 set
-//                receiveMessage.setReceived_id(id);
-//                socketUtil.getReceiveMessageLinkedBlockingQueue().offer(receiveMessage);
             } else {
                 // BAD_ACK 전달받은 값이 null
             }

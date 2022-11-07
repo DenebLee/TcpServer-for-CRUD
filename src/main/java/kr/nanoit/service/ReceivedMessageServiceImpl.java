@@ -46,6 +46,14 @@ public class ReceivedMessageServiceImpl implements ReceivedMessageService {
                     return false;
                 }
             }).collect(Collectors.toList());
+            for (ReceiveMessage receiveMessage : data) {
+                if (receiveMessage.getMessage_status().equals(MessageStatus.SELECTED)) {
+                    receive.update(receiveMessage);
+                } else {
+                    receiveMessage.setMessage_status(MessageStatus.SELECTED);
+                    receive.update(receiveMessage);
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -53,7 +61,7 @@ public class ReceivedMessageServiceImpl implements ReceivedMessageService {
     }
 
     @Override
-    public long insertMessage(ReceiveMessage receiveMessage) {
+    public Integer insertMessage(ReceiveMessage receiveMessage) {
         Timestamp currentTime = new Timestamp(System.currentTimeMillis());
         try {
             if (receiveMessage != null) {
@@ -62,7 +70,7 @@ public class ReceivedMessageServiceImpl implements ReceivedMessageService {
                 int result = receive.save(receiveMessage);
                 if (result > 0) {
                     log.info("INSERT DB COMPLETE MESSAGE_TYPE : {} , MESSAGE_STATUS : {} , RECEIVED_ID : {} , RECEIVED_TIME : {} , SENDER_AGENT_ID : {} , TO_PHONE_NUMBER : {}, FROM_PHONE_NUMBER : {}, MESSAGE_CONTENT : {}", receiveMessage.getMessageType(), receiveMessage.getMessage_status(), receiveMessage.getReceived_id(), receiveMessage.getReceived_time(), receiveMessage.getSender_agent_id(), receiveMessage.getTo_phone_number(), receiveMessage.getFrom_phone_number(), receiveMessage.getMessage_content());
-                    return receiveMessage.getReceived_id();
+                    return result;
                 } else {
                     log.warn("INSERT DB FAILED");
                     throw new InsertException("Insert failed");
@@ -74,28 +82,27 @@ public class ReceivedMessageServiceImpl implements ReceivedMessageService {
         return 0;
     }
 
-    @Override
-    public boolean referenceReceiveDB(ReceiveMessage receiveMessage) {
-        try {
-            if (receive.findById(receiveMessage.getReceived_id()) == receiveMessage) {
-                receiveMessage.setMessage_status(MessageStatus.SELECTED);
-                int result = receive.update(receiveMessage);
-                if (result == 1) {
-                    if (receive.findById(receiveMessage.getReceived_id()).getMessage_status() == MessageStatus.SELECTED) {
-                        return true;
-                    }
-                }
-
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
 
     @Override
     public boolean isNotExist() {
+        return false;
+    }
+
+    @Override
+    public boolean validation(ReceiveMessage receiveMessage) {
+        try {
+            ReceiveMessage validationdData = receive.findById(receiveMessage.getReceived_id());
+            if (validationdData != null) {
+                if (validationdData.getMessage_status().equals(receiveMessage.getMessage_status()) && validationdData.getMessageType().equals(receiveMessage.getMessageType())
+                        && validationdData.getReceived_time().equals(receiveMessage.getReceived_time()) && validationdData.getFrom_phone_number().equals(receiveMessage.getFrom_phone_number())
+                        && validationdData.getTo_phone_number().equals(receiveMessage.getTo_phone_number()) && validationdData.getMessage_content().equals(receiveMessage.getMessage_content())) {
+                    System.out.println("여기까지 확인 필요");
+                    return true;
+                }
+            }
+        } catch (SelectException e) {
+            throw new RuntimeException(e);
+        }
         return false;
     }
 

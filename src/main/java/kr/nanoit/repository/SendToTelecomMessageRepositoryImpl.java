@@ -21,7 +21,7 @@ public class SendToTelecomMessageRepositoryImpl implements SendToTelecomMessageR
 
     private void createSendTable() {
         try (SqlSession session = sessionManager.getSqlSession(true)) {
-            session.update("createTable");
+            session.update("send_createTable");
         } catch (Exception e) {
             e.printStackTrace();
         }

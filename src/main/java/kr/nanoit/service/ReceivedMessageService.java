@@ -12,11 +12,11 @@ public interface ReceivedMessageService {
 
     List<ReceiveMessage> selectAllMessage();
 
-    long insertMessage(ReceiveMessage receiveMessage) throws InsertException;
-
-    boolean referenceReceiveDB(ReceiveMessage receiveMessage);
+    Integer insertMessage(ReceiveMessage receiveMessage) throws InsertException;
 
     boolean isNotExist();
+
+    boolean validation(ReceiveMessage receiveMessage);
 
     boolean isAlive() throws SelectException;
 

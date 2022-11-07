@@ -1,6 +1,9 @@
 package kr.nanoit.tcp;
 
 import kr.nanoit.controller.SocketUtil;
+import kr.nanoit.core.db.DatabaseHandler;
+import kr.nanoit.service.ReceivedMessageService;
+import kr.nanoit.service.SendToTelecomMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.io.Resources;
 
@@ -18,7 +21,6 @@ public class GateWayMain {
 
     public static void main(String[] args) {
         log.info("[TCPSERVER START ] {}", SIMPLE_DATE_FORMAT.format(new Date()));
-
         try {
 
             Properties properties = new Properties();
@@ -33,16 +35,22 @@ public class GateWayMain {
 
             ServerSocket serverSocket = new ServerSocket(Integer.parseInt(properties.getProperty("tcp.server.port")));
 
+            DatabaseHandler databaseHandler = new DatabaseHandler(properties);
+
+            ReceivedMessageService receivedMessageService = databaseHandler.getReceivedMessageService();
+            SendToTelecomMessageService sendToTelecomMessageService = databaseHandler.getSendMessageService();
+
+
             SocketUtil socketUtil = new SocketUtil(serverSocket.accept());
-            // Thread list
-            Thread receive = new Thread(new ReceiveServer(socketUtil, properties));
+
+            Thread receive = new Thread(new ReceiveServer(socketUtil, receivedMessageService));
             receive.setName("Receive-Server");
 
-//            Thread send = new Thread(new SendServer(socketUtil, properties));
-//            send.setName("Send-Server");
+            Thread send = new Thread(new SendServer(socketUtil, sendToTelecomMessageService, receivedMessageService));
+            send.setName("Send-Server");
 
             receive.start();
-//            send.start();
+            send.start();
 
         } catch (Exception e) {
             e.printStackTrace();

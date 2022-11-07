@@ -10,7 +10,7 @@ public interface SendToTelecomMessageService {
 
     List<SendMessage> getSendMessage();
 
-    void insertMessage(SendMessage sendMessage);
+    Integer insertMessage(SendMessage sendMessage);
 
     boolean integrityCheck();
 

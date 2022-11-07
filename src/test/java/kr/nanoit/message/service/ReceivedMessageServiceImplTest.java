@@ -7,7 +7,6 @@ import kr.nanoit.model.message.ReceiveMessage;
 import kr.nanoit.exception.message.DeleteException;
 import kr.nanoit.exception.message.InsertException;
 import kr.nanoit.exception.message.SelectException;
-import kr.nanoit.repository.ReceivedMessageRepository;
 import kr.nanoit.service.ReceivedMessageService;
 import kr.nanoit.service.ReceivedMessageServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,12 +43,12 @@ class ReceivedMessageServiceImplTest extends TestServiceSetUp {
         // 테스트 칼럼 10개 세팅
         List<ReceiveMessage> dataSetList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            ReceiveMessage dataSet = new ReceiveMessage(MessageType.SMS, "SEND", MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), 1 + i, "010-4444-1111", "010-4444-5353", "테스트용" + i);
+            ReceiveMessage dataSet = new ReceiveMessage(MessageType.SMS, MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), 1 + i, "010-4444-1111", "010-4444-5353", "테스트용" + i);
             dataSetList.add(dataSet);
         }
         receivedMessageRepository.saveAll(dataSetList);
         // when
-        receivedMessageService.selectAllMessage();
+        List<ReceiveMessage> actual = receivedMessageService.selectAllMessage();
 
         // then
     }
@@ -62,10 +61,10 @@ class ReceivedMessageServiceImplTest extends TestServiceSetUp {
         int count2 = 414;
 
         for (int i = 0; i < count; i++) {
-            test.add(new ReceiveMessage(MessageType.SMS, "SEND", MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), 1 + i, "010-4444-1111", "010-4444-5353", "안녕하세요" + i));
+            test.add(new ReceiveMessage(MessageType.SMS, MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), 1 + i, "010-4444-1111", "010-4444-5353", "안녕하세요" + i));
         }
         for (int i = 0; i < count2; i++) {
-            test.add(new ReceiveMessage(MessageType.SMS, "SEND", MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), 1 + i, "010-4444-1111", "010-4444-5353", "안뇽하세요" + i));
+            test.add(new ReceiveMessage(MessageType.SMS, MessageStatus.WAIT, 0, new Timestamp(System.currentTimeMillis()), 1 + i, "010-4444-1111", "010-4444-5353", "안뇽하세요" + i));
         }
 
         int total_count = receivedMessageRepository.saveAll(test);
@@ -80,7 +79,7 @@ class ReceivedMessageServiceImplTest extends TestServiceSetUp {
     @DisplayName("RECEIVED SERVICE -> INSERT MESSAGE TO DB")
     void should_insert_when_received_quere_have_a_data() throws InsertException, SelectException {
         // given
-        ReceiveMessage expected = new ReceiveMessage(MessageType.SMS, "SEND", null, 0, null, 1, "010-4444-1111", "010-4444-5353", "보냅니다 메시지 받으세영");
+        ReceiveMessage expected = new ReceiveMessage(MessageType.SMS, null, 0, null, 1, "010-4444-1111", "010-4444-5353", "보냅니다 메시지 받으세영");
 
         // when
         receivedMessageService.insertMessage(expected);

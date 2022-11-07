@@ -5,23 +5,11 @@
 
     <!--    마이바티스 에서 insert, update, delte의 return 은 int-->
 
-    <update id="createTable">
-        CREATE TABLE IF NOT EXISTS received_message_from_agent
-        (
-            RECEIVED_ID       BIGSERIAL PRIMARY KEY NOT NULL,
-            PROTOCOL          VARCHAR(8)            NOT NULL,
-            MESSAGE_TYPE      VARCHAR(8)            NOT NULL,
-            MESSAGE_STATUS    INT                   NOT NULL,
-            RECEIVED_TIME     TIMESTAMP             NOT NULL,
-            SENDER_AGENT_ID   INT                   NOT NULL,
-            TO_PHONE_NUMBER   VARCHAR(32)           NOT NULL,
-            FROM_PHONE_NUMBER VARCHAR(32)           NOT NULL,
-            MESSAGE_CONTENT   TEXT                  NOT NULL
-            );
+    <update id="send_createTable">
+
         CREATE TABLE IF NOT EXISTS send_message_from_gateway_to_telecom
         (
             SEND_ID        BIGSERIAL PRIMARY KEY NOT NULL,
-            PROTOCOL       VARCHAR(8)            NOT NULL,
             MESSAGE_TYPE   VARCHAR(8)            NOT NULL,
             RECEIVED_ID    BIGINT                NOT NULL,
             MESSAGE_STATUS INT                   NOT NULL,
@@ -77,8 +65,8 @@
 
     <insert id="send_save" parameterType="kr.nanoit.model.message.SendMessage" useGeneratedKeys="true"
             keyProperty="send_id">
-        INSERT INTO send_message_from_gateway_to_telecom (protocol,message_type, message_status, received_id, result)
-        VALUES (#{protocol}, #{message_type}, #{message_status}, #{received_id}, #{result})
+        INSERT INTO send_message_from_gateway_to_telecom (message_type, message_status, received_id, result)
+        VALUES ( #{message_type}, #{message_status}, #{received_id}, #{result})
     </insert>
 
     <insert id="send_saveAll" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="send_id">
@@ -86,33 +74,14 @@
         VALUES
         <foreach collection="list" item="item" separator=",">
             (
-            #{item.protocol},#{item.message_type},#{item.message_status},#{item.received_id},#{item.result}
+            #{item.message_type},#{item.message_status},#{item.received_id},#{item.result}
             )
         </foreach>
     </insert>
 
+    <select id="send_ping" resultType="java.lang.Boolean">
+        SELECT 1;
+    </select>
 
-    <insert id="save" parameterType="kr.nanoit.model.message.ReceiveMessage" useGeneratedKeys="true"
-            keyProperty="received_id">
-        INSERT INTO received_message_from_agent (message_type, message_status, received_time, sender_agent_id,
-                                                 to_phone_number,
-                                                 from_phone_number, message_content)
-        VALUES (#{message_type}, #{message_status}, #{received_time}, #{sender_agent_id}, #{to_phone_number},
-                #{from_phone_number},
-                #{message_content})
-    </insert>
-
-    <insert id="saveAll" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="received_id">
-        INSERT INTO received_message_from_agent(message_type, message_status,received_time, sender_agent_id,
-        to_phone_number,from_phone_number, message_content)
-        VALUES
-        <foreach collection="list" item="item" separator=",">
-            (
-            #{item.message_type},#{item.message_status}, #{item.received_time}, #{item.sender_agent_id},
-            #{item.to_phone_number},
-            #{item.from_phone_number},#{item.message_content}
-            )
-        </foreach>
-    </insert>
 </mapper>
 

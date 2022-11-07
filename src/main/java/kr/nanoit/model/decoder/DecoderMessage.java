@@ -12,7 +12,6 @@ public class DecoderMessage {
 
     public MessageType messageType(byte[] receiveByte) {
         String test = new String(receiveByte, (IndexSend.INDEX_MESSAGE_TYPE), LengthSend.LENGTH_SEND_MESSAGE_TYPE);
-        System.out.println(test);
         return MessageType.fromPropertyName(test);
     }
 
